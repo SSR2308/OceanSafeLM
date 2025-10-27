@@ -75,6 +75,6 @@ def response_generator(query):
   query_embed = retrive_embed_openai(query)
   query_similair = retrivesimilair(query_embed)
   query_extract = content_extraction(query_similair)
-  query_ans = query_answering(query, query_extract)
-  return query_ans
+  #query_ans = query_answering(query, query_extract)
+  return query_extract
 
