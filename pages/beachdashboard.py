@@ -28,7 +28,6 @@ def get_weather_data(lat, lon):
 # Tide Data
 # ---------------------------
 def get_tide_data(station_id="9410840"):
-    """Fetch hourly tide predictions from NOAA and ensure rounding to 2 decimals."""
     url = "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter"
     params = {
         "station": station_id,
@@ -60,10 +59,8 @@ def get_tide_data(station_id="9410840"):
 # Tide Summary
 # ---------------------------
 def summarize_tides(tide_df):
-    """Find and summarize high and low tides for the day (rounded to 2 decimals)."""
     if tide_df.empty:
         return pd.DataFrame()
-
     df = tide_df.copy()
     df['diff'] = df['Tide (ft)'].diff().fillna(0)
     
@@ -152,10 +149,9 @@ else:
 # Hazard Reporting
 # ---------------------------
 st.subheader("📢 Report a Hazard")
-hazard_type = st.selectbox(
-    "Select Hazard Type",
-    ["Jellyfish", "Broken glass", "High surf", "Trash"],
-    key=f"{selected_beach}_hazard_type"
+st.markdown(
+    "Click anywhere on the map to report a hazard directly. "
+    "You can enter types like Jellyfish, Broken glass, High surf, or Trash."
 )
 
 # ---------------------------
