@@ -1,9 +1,3 @@
-import streamlit as st
-import pandas as pd
-import requests
-import json
-import plotly.express as px
-import streamlit.components.v1 as components
 
 def get_weather_data(lat, lon):
     url = f"https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={OPENWEATHER_API_KEY}&units=imperial"
