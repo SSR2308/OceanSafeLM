@@ -16,7 +16,8 @@ if prompt := st.chat_input("What's up?"):
     st.markdown(prompt)
   with st.chat_message("assistant"):
     similair = response_generator(prompt)
-    response = st.write_stream(query_answering(prompt, similair))
+    response = query_answering(prompt, similair)
+    st.markdown(response)
   st.session_state.messages.append({"role": "assistant", "content": response})
   
   
