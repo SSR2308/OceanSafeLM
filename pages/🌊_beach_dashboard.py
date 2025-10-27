@@ -77,15 +77,105 @@ def summarize_tides(tide_df):
     return summary
 
 # ---------------------------
-# Beach Data
+# Beach Data with Images, Descriptions, Facts, Visitor Info
 # ---------------------------
 beaches = {
-    "Santa Monica Pier": {"lat": 34.0100, "lon": -118.4950, "station": "9410840"},
-    "Venice Beach": {"lat": 33.9850, "lon": -118.4695, "station": "9410840"},
-    "Malibu Surfrider Beach": {"lat": 34.0360, "lon": -118.6880, "station": "9410840"},
-    "Huntington Beach": {"lat": 33.6595, "lon": -117.9988, "station": "9411270"},
-    "Newport Beach": {"lat": 33.6189, "lon": -117.9290, "station": "9411340"},
-    "Laguna Beach": {"lat": 33.5427, "lon": -117.7854, "station": "9411340"},
+    "Santa Monica Pier": {
+        "lat": 34.0100, "lon": -118.4950, "station": "9410840",
+        "image": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&h=400&fit=crop",
+        "description": "An iconic landmark offering stunning ocean views, amusement rides, and family-friendly attractions.",
+        "fun_facts": [
+            "Opened in 1909.",
+            "Home to Pacific Park, the only amusement park on a California pier.",
+            "Featured in many films and TV shows."
+        ],
+        "visitor_info": {
+            "Dogs Allowed": "No",
+            "Parking": "Paid; free 8 PM–6 AM",
+            "Beach Hours": "6 AM – 10 PM",
+            "Nearby Amenities": "Restrooms, Food, Lifeguard Station"
+        }
+    },
+    "Venice Beach": {
+        "lat": 33.9850, "lon": -118.4695, "station": "9410840",
+        "image": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&h=400&fit=crop",
+        "description": "Known for its bohemian spirit, street performers, and bustling boardwalk.",
+        "fun_facts": [
+            "Home to Muscle Beach outdoor gym.",
+            "Venice Canals inspired by Venice, Italy.",
+            "Popular filming location for music videos."
+        ],
+        "visitor_info": {
+            "Dogs Allowed": "Yes, on leash",
+            "Parking": "Paid; free before 8 AM",
+            "Beach Hours": "6 AM – 10 PM",
+            "Nearby Amenities": "Skate Park, Food, Restrooms"
+        }
+    },
+    "Malibu Surfrider Beach": {
+        "lat": 34.0360, "lon": -118.6880, "station": "9410840",
+        "image": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&h=400&fit=crop",
+        "description": "Famous for perfect waves and surf culture.",
+        "fun_facts": [
+            "Known as 'The First Point' by surfers.",
+            "Part of Malibu Lagoon State Beach.",
+            "Hosts surf competitions."
+        ],
+        "visitor_info": {
+            "Dogs Allowed": "No",
+            "Parking": "Free parking lot, first-come-first-serve",
+            "Beach Hours": "Sunrise to Sunset",
+            "Nearby Amenities": "Lifeguard Station, Restrooms"
+        }
+    },
+    "Huntington Beach": {
+        "lat": 33.6595, "lon": -117.9988, "station": "9411270",
+        "image": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&h=400&fit=crop",
+        "description": "Also known as Surf City USA, world-famous for surfing.",
+        "fun_facts": [
+            "Hosts the US Open of Surfing.",
+            "Pier extends 1,850 feet into the ocean.",
+            "Great for volleyball and beach events."
+        ],
+        "visitor_info": {
+            "Dogs Allowed": "No",
+            "Parking": "Paid, free 8 PM–6 AM",
+            "Beach Hours": "6 AM – 10 PM",
+            "Nearby Amenities": "Lifeguard Station, Food, Restrooms"
+        }
+    },
+    "Newport Beach": {
+        "lat": 33.6189, "lon": -117.9290, "station": "9411340",
+        "image": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&h=400&fit=crop",
+        "description": "Offers wide sandy beaches and a bustling harbor.",
+        "fun_facts": [
+            "Famous for Newport Harbor boating.",
+            "Home to Balboa Fun Zone amusement area.",
+            "Popular for whale watching."
+        ],
+        "visitor_info": {
+            "Dogs Allowed": "Yes, on leash",
+            "Parking": "Paid parking",
+            "Beach Hours": "6 AM – 10 PM",
+            "Nearby Amenities": "Lifeguard Station, Food, Restrooms"
+        }
+    },
+    "Laguna Beach": {
+        "lat": 33.5427, "lon": -117.7854, "station": "9411340",
+        "image": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&h=400&fit=crop",
+        "description": "Known for art galleries, tide pools, and dramatic cliffs.",
+        "fun_facts": [
+            "Home to the annual Pageant of the Masters.",
+            "Famous for tide pools and snorkeling.",
+            "Coastal cliffs provide scenic viewpoints."
+        ],
+        "visitor_info": {
+            "Dogs Allowed": "Yes, on leash",
+            "Parking": "Paid parking",
+            "Beach Hours": "6 AM – 10 PM",
+            "Nearby Amenities": "Restrooms, Food, Lifeguard Station"
+        }
+    }
 }
 
 # ---------------------------
@@ -101,6 +191,21 @@ if "hazard_reports" not in st.session_state:
 # ---------------------------
 selected_beach = st.selectbox("Select Beach:", list(beaches.keys()))
 beach_coords = beaches[selected_beach]
+
+# ---------------------------
+# Beach Image and Description
+# ---------------------------
+st.image(beach_coords["image"], use_column_width=True, caption=selected_beach)
+st.subheader(f"About {selected_beach}")
+st.write(beach_coords["description"])
+
+with st.expander("🌟 Fun Facts"):
+    for fact in beach_coords["fun_facts"]:
+        st.markdown(f"- {fact}")
+
+with st.expander("📍 Visitor Information"):
+    for key, value in beach_coords["visitor_info"].items():
+        st.markdown(f"**{key}:** {value}")
 
 # ---------------------------
 # Weather Metrics
@@ -146,7 +251,7 @@ else:
     st.info("No tide data available for this beach.")
 
 # ---------------------------
-# Hazard Reporting
+# Hazard Reporting Section
 # ---------------------------
 st.subheader("📢 Report a Hazard")
 st.markdown(
