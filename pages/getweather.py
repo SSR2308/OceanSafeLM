@@ -6,6 +6,10 @@ import plotly.express as px
 import streamlit.components.v1 as components
 
 
+OPENWEATHER_API_KEY = st.secrets["OPENWEATHER_API_KEY"]
+MAPBOX_TOKEN = st.secrets["MAPBOX_TOKEN"]
+
+
 def get_weather_data(lat, lon):
     url = f"https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={OPENWEATHER_API_KEY}&units=imperial"
     res = requests.get(url)
@@ -80,7 +84,7 @@ beaches = {
 # ---------------------------
 # Streamlit Setup
 # ---------------------------
-st.set_page_config(page_title="OceanSafe", layout="wide", page_icon="🌊")
+# st.set_page_config(page_title="OceanSafe", layout="wide", page_icon="🌊")
 
 if "hazard_reports" not in st.session_state:
     st.session_state["hazard_reports"] = []
@@ -88,7 +92,7 @@ if "hazard_reports" not in st.session_state:
 # ---------------------------
 # Sidebar Navigation
 # ---------------------------
-page = st.sidebar.radio("Navigation", ["🏠 Home", "🌊 Beaches"])
+# page = st.sidebar.radio("Navigation", ["🏠 Home", "🌊 Beaches"])
 
 # ---------------------------
 # Home Page
