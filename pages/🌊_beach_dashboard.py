@@ -98,7 +98,7 @@ beaches = {
     },
     "Venice Beach": {
         "lat": 33.9850, "lon": -118.4695, "station": "9410840",
-        "image": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&h=400&fit=crop",
+        "image": "https://drupal-prod.visitcalifornia.com/sites/default/files/styles/fluid_1920/public/VC_California101_VeniceBeach_Stock_RF_638340372_1280x640.jpg.webp?itok=emtWYsp9",
         "description": "Known for its bohemian spirit, street performers, and bustling boardwalk.",
         "fun_facts": [
             "Home to Muscle Beach outdoor gym.",
@@ -114,7 +114,7 @@ beaches = {
     },
     "Malibu Surfrider Beach": {
         "lat": 34.0360, "lon": -118.6880, "station": "9410840",
-        "image": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&h=400&fit=crop",
+        "image": "https://www.worldbeachguide.com/photos/large/malibu-beach-pier-lagoon.jpg",
         "description": "Famous for perfect waves and surf culture.",
         "fun_facts": [
             "Known as 'The First Point' by surfers.",
