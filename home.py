@@ -44,7 +44,7 @@ accurate, helpful information to ensure you have a safe and enjoyable beach expe
 
 # Call to action
 st.markdown("<br>", unsafe_allow_html=True)
-st.info("👈 Navigate to the **Chatbot** page from the sidebar to start asking questions!"
+st.info("👈 Navigate to the **Chatbot** page from the sidebar to start asking questions!")
 
 # Footer
 st.markdown("<br><br>", unsafe_allow_html=True)
