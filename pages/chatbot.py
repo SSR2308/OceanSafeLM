@@ -1,5 +1,5 @@
 import streamlit as st 
-from rag import response_generator 
+from rag import response_generator, query_answering
 
 st.title("Ocean Safety Chatbot") 
 
@@ -15,6 +15,8 @@ if prompt := st.chat_input("What's up?"):
   with st.chat_message("user"): 
     st.markdown(prompt)
   with st.chat_message("assistant"):
-    response = st.write_stream(response_generator(prompt))
+    similair = response_generator(prompt)
+    response = st.write_stream(query_answering(prompt, similair))
   st.session_state.messages.append({"role": "assistant", "content": response})
-    
+  
+  
