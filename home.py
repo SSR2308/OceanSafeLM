@@ -18,3 +18,26 @@ st.image(
     use_container_width=True,
     caption="Stay Safe at the Beach"
 )
+
+# Add some spacing
+st.markdown("<br>", unsafe_allow_html=True)
+
+# About section
+st.header("🌊 What is this about?")
+
+
+st.markdown("""
+Welcome to the **Beach Safety Hazards Chatbot** - your intelligent companion for beach safety information!
+
+This chatbot is designed to help you:
+
+- 🚨 **Identify potential beach hazards** and understand the risks
+- 💡 **Get instant answers** to your beach safety questions
+- 🏊 **Learn about water safety**, rip currents, and swimming conditions
+- 🐚 **Understand marine life hazards** like jellyfish, stingrays, and more
+- ☀️ **Receive sun protection tips** and weather-related safety advice
+- 🆘 **Know what to do in emergencies** at the beach
+
+Simply ask any question about beach safety, and our AI-powered chatbot will provide you with 
+accurate, helpful information to ensure you have a safe and enjoyable beach experience!
+""")
