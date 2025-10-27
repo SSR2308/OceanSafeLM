@@ -92,7 +92,7 @@ if "hazard_reports" not in st.session_state:
 # ---------------------------
 # Sidebar Navigation
 # ---------------------------
-# page = st.sidebar.radio("Navigation", ["🏠 Home", "🌊 Beaches"])
+page = st.sidebar.radio("Navigation", ["🏠 Home", "🌊 Beaches"])
 
 # ---------------------------
 # Home Page
