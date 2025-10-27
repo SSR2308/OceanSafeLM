@@ -1,10 +1,9 @@
 import streamlit as st
 
-st.set_page_config(page_title="Home!")
 
 
 st.set_page_config(
-    page_title="Beach Safety Hazards Chatbot",
+    page_title="Ocean Safe",
     page_icon="🏖️",
     layout="wide"
 )
@@ -29,9 +28,18 @@ st.header("🌊 What is this about?")
 
 
 st.markdown("""
-Welcome to the **Beach Safety Hazards Chatbot** - your intelligent companion for beach safety information!
+Welcome to the **Ocean Safe**, please explore and direct beach-related questions to Tidebot- your intelligent companion for beach safety information!
 
-This chatbot is designed to help you:
+Please visit the Beach Dashboard to find out: 
+
+- Check Tempreture
+- Check the Weather
+- Check the UVs 
+- Understand the tides and the tide pattern throughout the day 
+- Report and receive live hazard updates
+- Receive live navigation to the Beaches
+
+Tidebot is designed to help you:
 
 - 🚨 **Identify potential beach hazards** and understand the risks
 - 💡 **Get instant answers** to your beach safety questions
