@@ -5,11 +5,15 @@ import json
 import plotly.express as px
 import streamlit.components.v1 as components
 
-
+# ---------------------------
+# API Keys from Secrets
+# ---------------------------
 OPENWEATHER_API_KEY = st.secrets["OPENWEATHER_API_KEY"]
 MAPBOX_TOKEN = st.secrets["MAPBOX_TOKEN"]
 
-
+# ---------------------------
+# Weather Data
+# ---------------------------
 def get_weather_data(lat, lon):
     url = f"https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={OPENWEATHER_API_KEY}&units=imperial"
     res = requests.get(url)
@@ -20,6 +24,9 @@ def get_weather_data(lat, lon):
         "UV Index": "Check local UV forecast"
     }
 
+# ---------------------------
+# Tide Data
+# ---------------------------
 def get_tide_data(station_id="9410840"):
     """Fetch hourly tide predictions from NOAA and ensure rounding to 2 decimals."""
     url = "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter"
@@ -49,6 +56,9 @@ def get_tide_data(station_id="9410840"):
         st.error(f"Failed to fetch tide data: {e}")
         return pd.DataFrame(columns=['t', 'Tide (ft)'])
 
+# ---------------------------
+# Tide Summary
+# ---------------------------
 def summarize_tides(tide_df):
     """Find and summarize high and low tides for the day (rounded to 2 decimals)."""
     if tide_df.empty:
@@ -82,174 +92,157 @@ beaches = {
 }
 
 # ---------------------------
-# Streamlit Setup
+# Streamlit Page Setup
 # ---------------------------
-# st.set_page_config(page_title="OceanSafe", layout="wide", page_icon="🌊")
+st.title("🌊 California Beach Safety Dashboard")
 
 if "hazard_reports" not in st.session_state:
     st.session_state["hazard_reports"] = []
 
 # ---------------------------
-# Sidebar Navigation
+# Beach Selection
 # ---------------------------
-page = st.sidebar.radio("Navigation", ["🏠 Home", "🌊 Beaches"])
+selected_beach = st.selectbox("Select Beach:", list(beaches.keys()))
+beach_coords = beaches[selected_beach]
 
 # ---------------------------
-# Home Page
+# Weather Metrics
 # ---------------------------
-if page == "🏠 Home":
-    st.markdown("<h1 style='text-align: center; color: #0077b6;'>🌊 Welcome to OceanSafe</h1>", unsafe_allow_html=True)
-    st.markdown("<h3 style='text-align: center; color: #00b4d8;'>Stay safe, report hazards, and enjoy California beaches!</h3>", unsafe_allow_html=True)
-    st.image("https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1500&q=80", use_column_width=True)
+st.subheader(f"🏖️ {selected_beach} Overview")
+weather = get_weather_data(beach_coords["lat"], beach_coords["lon"])
+cols = st.columns(3)
+cols[0].metric("🌡 Temperature", f"{weather['Temperature (°F)']} °F")
+cols[1].metric("☀ Weather", weather["Weather"])
+cols[2].metric("🕶 UV Index", weather["UV Index"])
 
 # ---------------------------
-# Beaches Page
+# Tide Summary and Chart
 # ---------------------------
-if page == "🌊 Beaches":
-    st.title("🌊 California Beach Safety Dashboard")
-
-    selected_beach = st.selectbox("Select Beach:", list(beaches.keys()))
-    beach_coords = beaches[selected_beach]
-
-    # Weather metrics
-    st.subheader(f"🏖️ {selected_beach} Overview")
-    weather = get_weather_data(beach_coords["lat"], beach_coords["lon"])
-    cols = st.columns(3)
-    cols[0].metric("🌡 Temperature", f"{weather['Temperature (°F)']} °F")
-    cols[1].metric("☀ Weather", weather["Weather"])
-    cols[2].metric("🕶 UV Index", weather["UV Index"])
-
-    # Tide summary and chart
-    st.subheader("🌊 Tide Forecast (Next 24 Hours)")
-    tide_df = get_tide_data(beach_coords["station"])
-    if not tide_df.empty:
-        tide_summary = summarize_tides(tide_df)
-        if not tide_summary.empty:
-            st.markdown("**🕒 Upcoming High and Low Tides**")
-            st.table(tide_summary)
-        else:
-            st.info("No high/low tide points found for today.")
-        
-        # Round for chart clarity
-        tide_df['Tide (ft)'] = tide_df['Tide (ft)'].round(2)
-        
-        # Collapsible chart section
-        with st.expander("📈 Show Tide Graph"):
-            fig = px.line(
-                tide_df.head(24),
-                x='t',
-                y='Tide (ft)',
-                title="Tide Levels - Next 24 Hours",
-                markers=True
-            )
-            fig.update_layout(
-                xaxis_title="Time",
-                yaxis_title="Tide Height (ft)",
-                xaxis_tickformat="%I:%M %p",
-                template="plotly_white",
-                showlegend=False
-            )
-            st.plotly_chart(fig, use_container_width=True)
+st.subheader("🌊 Tide Forecast (Next 24 Hours)")
+tide_df = get_tide_data(beach_coords["station"])
+if not tide_df.empty:
+    tide_summary = summarize_tides(tide_df)
+    if not tide_summary.empty:
+        st.markdown("**🕒 Upcoming High and Low Tides**")
+        st.table(tide_summary)
     else:
-        st.info("No tide data available for this beach.")
+        st.info("No high/low tide points found for today.")
+    
+    tide_df['Tide (ft)'] = tide_df['Tide (ft)'].round(2)
+    with st.expander("📈 Show Tide Graph"):
+        fig = px.line(
+            tide_df.head(24),
+            x='t',
+            y='Tide (ft)',
+            title="Tide Levels - Next 24 Hours",
+            markers=True
+        )
+        fig.update_layout(
+            xaxis_title="Time",
+            yaxis_title="Tide Height (ft)",
+            xaxis_tickformat="%I:%M %p",
+            template="plotly_white",
+            showlegend=False
+        )
+        st.plotly_chart(fig, use_container_width=True)
+else:
+    st.info("No tide data available for this beach.")
 
-    # Hazard reporting
-    st.subheader("📢 Report a Hazard")
-    hazard_type = st.selectbox(
-        "Select Hazard Type",
-        ["Jellyfish", "Broken glass", "High surf", "Trash"],
-        key=f"{selected_beach}_hazard_type"
-    )
+# ---------------------------
+# Hazard Reporting
+# ---------------------------
+st.subheader("📢 Report a Hazard")
+hazard_type = st.selectbox(
+    "Select Hazard Type",
+    ["Jellyfish", "Broken glass", "High surf", "Trash"],
+    key=f"{selected_beach}_hazard_type"
+)
 
-    # ---------------------------
-    # Mapbox GL JS Map
-    # ---------------------------
-    hazard_data_json = json.dumps(st.session_state["hazard_reports"])
-    show_directions = st.checkbox("Show Directions", key="directions_toggle")
+# ---------------------------
+# Map Section
+# ---------------------------
+hazard_data_json = json.dumps(st.session_state["hazard_reports"])
+show_directions = st.checkbox("Show Directions", key="directions_toggle")
 
-    components.html(f"""
-    <head>
-        <link href='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.css' rel='stylesheet' />
-        <script src='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.js'></script>
-        <script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.1.0/mapbox-gl-directions.js'></script>
-        <link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.1.0/mapbox-gl-directions.css' />
-    </head>
-    <body>
-        <div id='map' style='width:100%; height:650px;'></div>
-        <script>
-            mapboxgl.accessToken = '{MAPBOX_TOKEN}';
+components.html(f"""
+<head>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.css' rel='stylesheet' />
+    <script src='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.js'></script>
+    <script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.1.0/mapbox-gl-directions.js'></script>
+    <link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.1.0/mapbox-gl-directions.css' />
+</head>
+<body>
+    <div id='map' style='width:100%; height:650px;'></div>
+    <script>
+        mapboxgl.accessToken = '{MAPBOX_TOKEN}';
 
-            navigator.geolocation.getCurrentPosition(successLocation, errorLocation, {{
-                enableHighAccuracy: true
+        navigator.geolocation.getCurrentPosition(successLocation, errorLocation, {{
+            enableHighAccuracy: true
+        }});
+
+        function successLocation(position) {{
+            setupMap([position.coords.longitude, position.coords.latitude])
+        }}
+
+        function errorLocation() {{
+            setupMap([{beach_coords['lon']}, {beach_coords['lat']}])
+        }}
+
+        function setupMap(center) {{
+            const map = new mapboxgl.Map({{
+                container: 'map',
+                style: 'mapbox://styles/mapbox/streets-v11',
+                center: center,
+                zoom: 14
             }});
 
-            function successLocation(position) {{
-                setupMap([position.coords.longitude, position.coords.latitude])
-            }}
+            const nav = new mapboxgl.NavigationControl();
+            map.addControl(nav);
 
-            function errorLocation() {{
-                setupMap([{beach_coords['lon']}, {beach_coords['lat']}])
-            }}
+            const userMarker = new mapboxgl.Marker({{color:'blue'}})
+                .setLngLat(center)
+                .addTo(map);
 
-            function setupMap(center) {{
-                const map = new mapboxgl.Map({{
-                    container: 'map',
-                    style: 'mapbox://styles/mapbox/streets-v11',
-                    center: center,
-                    zoom: 14
-                }});
+            navigator.geolocation.watchPosition(function(pos){{
+                const lon = pos.coords.longitude;
+                const lat = pos.coords.latitude;
+                userMarker.setLngLat([lon, lat]);
+                if(window.directions) {{
+                    window.directions.setOrigin([lon, lat]);
+                }}
+            }}, function(err){{ console.error(err); }}, {{ enableHighAccuracy:true }});
 
-                const nav = new mapboxgl.NavigationControl();
-                map.addControl(nav);
+            const hazards = {hazard_data_json};
+            hazards.forEach(h => {{
+                if(h.beach == "{selected_beach}") {{
+                    new mapboxgl.Marker({{color:'orange'}})
+                        .setLngLat([h.lon, h.lat])
+                        .setPopup(new mapboxgl.Popup().setText(h.hazard))
+                        .addTo(map);
+                }}
+            }});
 
-                // Live user marker
-                const userMarker = new mapboxgl.Marker({{color:'blue'}})
-                    .setLngLat(center)
-                    .addTo(map);
+            map.on('click', function(e) {{
+                const lat = e.lngLat.lat;
+                const lon = e.lngLat.lng;
+                const hazard = prompt("Enter hazard type (e.g., Jellyfish, Trash, High surf):");
+                if(hazard) {{
+                    fetch("", {{
+                        method: "POST",
+                        headers: {{ "Content-Type": "application/json" }},
+                        body: JSON.stringify({{lat:lat, lon:lon, hazard: hazard, beach: "{selected_beach}"}})
+                    }});
+                    new mapboxgl.Marker({{color:'orange'}})
+                        .setLngLat([lon, lat])
+                        .setPopup(new mapboxgl.Popup().setText(hazard))
+                        .addTo(map);
+                }}
+            }});
 
-                navigator.geolocation.watchPosition(function(pos){{
-                    const lon = pos.coords.longitude;
-                    const lat = pos.coords.latitude;
-                    userMarker.setLngLat([lon, lat]);
-                    if(window.directions) {{
-                        window.directions.setOrigin([lon, lat]);
-                    }}
-                }}, function(err){{ console.error(err); }}, {{ enableHighAccuracy:true }});
+            {"window.directions = new MapboxDirections({accessToken: mapboxgl.accessToken, unit:'imperial', profile:'mapbox/walking'}); map.addControl(window.directions, 'top-left'); window.directions.setDestination([" + str(beach_coords['lon']) + "," + str(beach_coords['lat']) + "]);" if show_directions else ""}
+        }}
+    </script>
+</body>
+""", height=650)
 
-                // Add hazard markers
-                const hazards = {hazard_data_json};
-                hazards.forEach(h => {{
-                    if(h.beach == "{selected_beach}") {{
-                        new mapboxgl.Marker({{color:'orange'}})
-                            .setLngLat([h.lon, h.lat])
-                            .setPopup(new mapboxgl.Popup().setText(h.hazard))
-                            .addTo(map);
-                    }}
-                }});
-
-                // Click-to-add hazard
-                map.on('click', function(e) {{
-                    const lat = e.lngLat.lat;
-                    const lon = e.lngLat.lng;
-                    const hazard = prompt("Enter hazard type (e.g., Jellyfish, Trash, High surf):");
-                    if(hazard) {{
-                        fetch("", {{
-                            method: "POST",
-                            headers: {{ "Content-Type": "application/json" }},
-                            body: JSON.stringify({{lat:lat, lon:lon, hazard: hazard, beach: "{selected_beach}"}})
-                        }});
-                        new mapboxgl.Marker({{color:'orange'}})
-                            .setLngLat([lon, lat])
-                            .setPopup(new mapboxgl.Popup().setText(hazard))
-                            .addTo(map);
-                    }}
-                }});
-
-                // Directions toggle
-                {"window.directions = new MapboxDirections({accessToken: mapboxgl.accessToken, unit:'imperial', profile:'mapbox/walking'}); map.addControl(window.directions, 'top-left'); window.directions.setDestination([" + str(beach_coords['lon']) + "," + str(beach_coords['lat']) + "]);" if show_directions else ""}
-            }}
-        </script>
-    </body>
-    """, height=650)
-
-    st.write("🟢 Your location updates live (blue marker). Click the map to report hazards. If 'Show Directions' is toggled on, navigation automatically starts.")
+st.write("🟢 Your location updates live (blue marker). Click the map to report hazards. If 'Show Directions' is toggled on, navigation automatically starts.")
