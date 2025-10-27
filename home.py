@@ -41,3 +41,15 @@ This chatbot is designed to help you:
 Simply ask any question about beach safety, and our AI-powered chatbot will provide you with 
 accurate, helpful information to ensure you have a safe and enjoyable beach experience!
 """)
+
+# Call to action
+st.markdown("<br>", unsafe_allow_html=True)
+st.info("👈 Navigate to the **Chatbot** page from the sidebar to start asking questions!"
+
+# Footer
+st.markdown("<br><br>", unsafe_allow_html=True)
+st.markdown("---")
+st.markdown(
+    "<p style='text-align: center; color: gray;'>Stay safe, stay informed, enjoy the beach! 🌴</p>",
+    unsafe_allow_html=True
+)
