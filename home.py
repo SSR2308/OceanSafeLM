@@ -42,7 +42,7 @@ splash_container.markdown(f"""
 </style>
 """, unsafe_allow_html=True)
 
-time.sleep(3)  # wait for splash duration
+time.sleep(5)  # wait for splash duration
 splash_container.empty()
 
 # ---------------------------
