@@ -205,62 +205,61 @@ components.html(f"""
 <script>
 mapboxgl.accessToken = '{MAPBOX_TOKEN}';
 
-function setupMap(center){{
-    const map = new mapboxgl.Map({{
-        container: 'map',
-        style: 'mapbox://styles/mapbox/streets-v11',
-        center: center,
-        zoom: 14
-    }});
+// Initialize map centered on selected beach
+const map = new mapboxgl.Map({{
+    container: 'map',
+    style: 'mapbox://styles/mapbox/streets-v11',
+    center: [{beach_coords['lon']}, {beach_coords['lat']}],
+    zoom: 14
+}});
 
-    map.addControl(new mapboxgl.NavigationControl());
+// Add navigation controls
+map.addControl(new mapboxgl.NavigationControl());
 
-    const userMarker = new mapboxgl.Marker({{color:'blue'}})
-        .setLngLat(center)
-        .addTo(map);
+// Add GeolocateControl for live location
+const geolocate = new mapboxgl.GeolocateControl({{
+    positionOptions: {{ enableHighAccuracy: true }},
+    trackUserLocation: true,
+    showUserHeading: true
+}});
+map.addControl(geolocate);
 
-    // Update user location live
-    navigator.geolocation.watchPosition(function(pos){{
-        const lon = pos.coords.longitude;
-        const lat = pos.coords.latitude;
-        userMarker.setLngLat([lon, lat]);
-        map.setCenter([lon, lat]);
-    }}, function(){{
-        console.warn("Geolocation failed, using beach coordinates.");
-    }}, {{ enableHighAccuracy:true }});
-    
-    const hazards = {hazard_data_json};
-    hazards.forEach(h => {{
-        if(h.beach == "{selected_beach}") {{
-            new mapboxgl.Marker({{color:'orange'}})
-                .setLngLat([h.lon, h.lat])
-                .setPopup(new mapboxgl.Popup().setText(h.hazard))
-                .addTo(map);
-        }}
-    }});
+// Automatically trigger geolocation when map loads
+map.on('load', function() {{
+    geolocate.trigger();
+}});
 
-    {"window.directions = new MapboxDirections({accessToken: mapboxgl.accessToken, unit:'imperial', profile:'mapbox/walking'}); map.addControl(window.directions, 'top-left'); window.directions.setDestination([" + str(beach_coords['lon']) + "," + str(beach_coords['lat']) + "]);" if show_directions else ""}
-    
-    map.on('click', function(e){{
-        const lat = e.lngLat.lat;
-        const lon = e.lngLat.lng;
-        const hazard = prompt("Enter hazard type (e.g., Jellyfish, Trash, High surf):");
-        if(hazard){{
-            fetch("", {{
-                method:"POST",
-                headers:{{"Content-Type":"application/json"}},
-                body: JSON.stringify({{lat:lat, lon:lon, hazard: hazard, beach: "{selected_beach}"}})
-            }});
-            new mapboxgl.Marker({{color:'orange'}})
-                .setLngLat([lon, lat])
-                .setPopup(new mapboxgl.Popup().setText(hazard))
-                .addTo(map);
-        }}
-    }});
-}}
+// Add existing hazards
+const hazards = {hazard_data_json};
+hazards.forEach(h => {{
+    if(h.beach == "{selected_beach}") {{
+        new mapboxgl.Marker({{color:'orange'}})
+            .setLngLat([h.lon, h.lat])
+            .setPopup(new mapboxgl.Popup().setText(h.hazard))
+            .addTo(map);
+    }}
+}});
 
-// Initialize map with beach coordinates; real location will override
-setupMap([{beach_coords['lon']}, {beach_coords['lat']}]);
+// Optional directions
+{"window.directions = new MapboxDirections({accessToken: mapboxgl.accessToken, unit:'imperial', profile:'mapbox/walking'}); map.addControl(window.directions, 'top-left'); window.directions.setDestination([" + str(beach_coords['lon']) + "," + str(beach_coords['lat']) + "]);" if show_directions else ""}
+
+// Click to report hazard
+map.on('click', function(e){{
+    const lat = e.lngLat.lat;
+    const lon = e.lngLat.lng;
+    const hazard = prompt("Enter hazard type (e.g., Jellyfish, Trash, High surf):");
+    if(hazard){{
+        fetch("", {{
+            method:"POST",
+            headers:{{"Content-Type":"application/json"}},
+            body: JSON.stringify({{lat:lat, lon:lon, hazard: hazard, beach: "{selected_beach}"}})
+        }});
+        new mapboxgl.Marker({{color:'orange'}})
+            .setLngLat([lon, lat])
+            .setPopup(new mapboxgl.Popup().setText(hazard))
+            .addTo(map);
+    }}
+}});
 </script>
 </body>
 """, height=650)
