@@ -205,7 +205,7 @@ components.html(f"""
 <script>
 mapboxgl.accessToken = '{MAPBOX_TOKEN}';
 
-// Initialize map centered on selected beach
+// Initialize map
 const map = new mapboxgl.Map({{
     container: 'map',
     style: 'mapbox://styles/mapbox/streets-v11',
@@ -213,10 +213,10 @@ const map = new mapboxgl.Map({{
     zoom: 14
 }});
 
-// Add navigation controls
+// Add navigation control
 map.addControl(new mapboxgl.NavigationControl());
 
-// Add GeolocateControl for live location
+// Add geolocate control (user location)
 const geolocate = new mapboxgl.GeolocateControl({{
     positionOptions: {{ enableHighAccuracy: true }},
     trackUserLocation: true,
@@ -224,12 +224,12 @@ const geolocate = new mapboxgl.GeolocateControl({{
 }});
 map.addControl(geolocate);
 
-// Automatically trigger geolocation when map loads
+// Trigger geolocation once map loads
 map.on('load', function() {{
     geolocate.trigger();
 }});
 
-// Add existing hazards
+// Add existing hazard markers
 const hazards = {hazard_data_json};
 hazards.forEach(h => {{
     if(h.beach == "{selected_beach}") {{
@@ -241,10 +241,10 @@ hazards.forEach(h => {{
 }});
 
 // Optional directions
-{"window.directions = new MapboxDirections({accessToken: mapboxgl.accessToken, unit:'imperial', profile:'mapbox/walking'}); map.addControl(window.directions, 'top-left'); window.directions.setDestination([" + str(beach_coords['lon']) + "," + str(beach_coords['lat']) + "]);" if show_directions else ""}
+{"const directions = new MapboxDirections({accessToken: mapboxgl.accessToken, unit:'imperial', profile:'mapbox/walking'}); map.addControl(directions, 'top-left'); directions.setDestination([" + str(beach_coords['lon']) + "," + str(beach_coords['lat']) + "]);" if show_directions else ""}
 
-// Click to report hazard
-map.on('click', function(e){{
+// Click-to-report hazard
+map.on('click', function(e) {{
     const lat = e.lngLat.lat;
     const lon = e.lngLat.lng;
     const hazard = prompt("Enter hazard type (e.g., Jellyfish, Trash, High surf):");
