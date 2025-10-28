@@ -360,7 +360,7 @@ components.html(f"""
             // Set destination to beach
             directions.setDestination([{beach_coords['lon']}, {beach_coords['lat']}]);
 
-            // Fit map to the entire route
+            // Fit map to entire route
             directions.on('route', function(e) {{
                 if(e.route && e.route.length > 0) {{
                     const route = e.route[0].geometry.coordinates;
