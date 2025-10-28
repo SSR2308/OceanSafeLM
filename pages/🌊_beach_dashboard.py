@@ -261,8 +261,7 @@ st.markdown(
 
 # ---------------------------
 # Map Section
-# ---------------------------
-components.html(f"""
+# ---------------------------components.html(f"""
 <head>
     <link href='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.css' rel='stylesheet' />
     <script src='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.js'></script>
@@ -397,3 +396,4 @@ components.html(f"""
 """, height=650)
 
 st.write("🟢 Directions now load instantly with simplified geometry (polyline6). Map fits to full route automatically without lag.")
+
