@@ -12,7 +12,7 @@ st.set_page_config(
 )
 
 # ---------------------------
-# Fullscreen Splash Animation with Text
+# Fullscreen Splash Animation
 # ---------------------------
 video_url = "https://github.com/SSR2308/OceanSafeLM/blob/9761d751ca32b424d92cc29eba0c179d212e7127/bc8c-f169-4534-a82d-acc2fad66609.mp4?raw=true"
 
@@ -26,20 +26,29 @@ splash_container.markdown(f"""
     height: 100%;
     background-color: white;
     display: flex;
-    flex-direction: column;
-    justify-content: flex-end;  
-    align-items: center;        
+    justify-content: center;
+    align-items: center;
     z-index: 9999;
     animation: fadeout 1s ease 4s forwards;
-    padding-bottom: 120px;       /* move text up */
 ">
-    <video autoplay muted playsinline style="max-width: 80%; max-height: 50%; margin-bottom: 30px;">
-        <source src="{video_url}" type="video/mp4">
-        Your browser does not support the video tag.
-    </video>
-    <h1 style='font-family: "Brush Script MT", cursive; font-size: 7em; color: #0077be; text-shadow: 2px 2px 8px rgba(0,0,0,0.5); transform: translateX(30px);'>
-        Ocean Safe
-    </h1>
+    <div style="position: relative; text-align: center;">
+        <video autoplay muted playsinline style="max-width: 80%; max-height: 50%;">
+            <source src="{video_url}" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <h1 style='
+            font-family: "Brush Script MT", cursive;
+            font-size: 7em;
+            color: #0077be;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+            position: absolute;
+            bottom: 50px;
+            left: 50%;
+            transform: translateX(30px);
+        '>
+            Ocean Safe
+        </h1>
+    </div>
 </div>
 
 <style>
