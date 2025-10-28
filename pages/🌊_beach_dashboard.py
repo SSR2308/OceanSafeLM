@@ -287,7 +287,7 @@ components.html(f"""
         const nav = new mapboxgl.NavigationControl();
         map.addControl(nav);
 
-        // Geolocate Control
+        // Geolocate Control (shows live location as a blue dot)
         const geolocate = new mapboxgl.GeolocateControl({{
             positionOptions: {{
                 enableHighAccuracy: true
@@ -297,12 +297,12 @@ components.html(f"""
         }});
         map.addControl(geolocate);
 
-        // Automatically trigger geolocation on load
+        // Trigger geolocation automatically
         map.on('load', function() {{
             geolocate.trigger();
         }});
 
-        // Display existing hazard markers
+        // Add hazard markers
         const hazards = {hazard_data_json};
         hazards.forEach(h => {{
             if(h.beach == "{selected_beach}") {{
