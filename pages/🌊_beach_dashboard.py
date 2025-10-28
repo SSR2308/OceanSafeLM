@@ -96,7 +96,7 @@ beaches = {
             "Nearby Amenities": "Restrooms, Food, Lifeguard Station"
         }
     },
-    # ... keep all other beaches as-is ...
+    # ... (other beaches as in your original code)
 }
 
 # ---------------------------
@@ -181,7 +181,7 @@ st.markdown(
 )
 
 # ---------------------------
-# Map Section with Live User Location Fix
+# Map Section with Live Location Fix
 # ---------------------------
 hazard_data_json = json.dumps(st.session_state["hazard_reports"])
 show_directions = st.checkbox("Show Directions", key="directions_toggle")
@@ -196,42 +196,55 @@ components.html(f"""
 <body>
     <div id='map' style='width:100%; height:650px;'></div>
     <script>
-        mapboxgl.accessToken = '{MAPBOX_TOKEN}';
-
-        function setupMap(center) {{
+        window.onload = function() {{
+            mapboxgl.accessToken = '{MAPBOX_TOKEN}';
             const map = new mapboxgl.Map({{
                 container: 'map',
                 style: 'mapbox://styles/mapbox/streets-v11',
-                center: center,
+                center: [{beach_coords['lon']}, {beach_coords['lat']}],
                 zoom: 14
             }});
+            map.addControl(new mapboxgl.NavigationControl());
 
-            const nav = new mapboxgl.NavigationControl();
-            map.addControl(nav);
+            let userMarker = null;
 
-            // User location marker
-            const userMarker = new mapboxgl.Marker({{color:'blue'}})
-                .setLngLat(center)
-                .addTo(map);
-
-            // Watch for location updates
-            if(navigator.geolocation) {{
+            if (navigator.geolocation) {{
                 navigator.geolocation.watchPosition(
-                    function(pos){{
+                    function(pos) {{
                         const lon = pos.coords.longitude;
                         const lat = pos.coords.latitude;
-                        userMarker.setLngLat([lon, lat]);
+
+                        if (!userMarker) {{
+                            userMarker = new mapboxgl.Marker({{ color: 'blue' }})
+                                .setLngLat([lon, lat])
+                                .addTo(map);
+                        }} else {{
+                            userMarker.setLngLat([lon, lat]);
+                        }}
+
                         map.setCenter([lon, lat]);
+
                         if(window.directions) {{
                             window.directions.setOrigin([lon, lat]);
                         }}
                     }},
-                    function(err){{ console.error(err); }},
+                    function(err) {{
+                        console.error(err);
+                        if (!userMarker) {{
+                            userMarker = new mapboxgl.Marker({{ color: 'blue' }})
+                                .setLngLat([{beach_coords['lon']}, {beach_coords['lat']}])
+                                .addTo(map);
+                        }}
+                    }},
                     {{ enableHighAccuracy: true }}
                 );
+            }} else {{
+                userMarker = new mapboxgl.Marker({{ color: 'blue' }})
+                    .setLngLat([{beach_coords['lon']}, {beach_coords['lat']}])
+                    .addTo(map);
             }}
 
-            // Existing hazard markers
+            // Load hazard markers
             const hazards = {hazard_data_json};
             hazards.forEach(h => {{
                 if(h.beach == "{selected_beach}") {{
@@ -242,7 +255,7 @@ components.html(f"""
                 }}
             }});
 
-            // Click to add hazard
+            // Click-to-report hazards
             map.on('click', function(e) {{
                 const lat = e.lngLat.lat;
                 const lon = e.lngLat.lng;
@@ -260,12 +273,8 @@ components.html(f"""
                 }}
             }});
 
-            // Directions
             {"window.directions = new MapboxDirections({accessToken: mapboxgl.accessToken, unit:'imperial', profile:'mapbox/walking'}); map.addControl(window.directions, 'top-left'); window.directions.setDestination([" + str(beach_coords['lon']) + "," + str(beach_coords['lat']) + "]);" if show_directions else ""}
-        }}
-
-        // Initialize map at beach coordinates first
-        setupMap([{beach_coords['lon']}, {beach_coords['lat']}]);
+        }};
     </script>
 </body>
 """, height=650)
