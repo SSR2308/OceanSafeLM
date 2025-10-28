@@ -10,7 +10,7 @@ st.set_page_config(
 with open("styles.css") as f:
     st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
 
-# Hero section
+# Hero section with background image
 st.markdown("""
 <div style='position: relative; text-align: center; color: white;'>
     <h1 style='font-size: 3em; margin-bottom: 0;'>Beach Safety Chatbot 🏖️</h1>
@@ -24,8 +24,11 @@ st.image(
     caption="Stay Safe at the Beach"
 )
 
-# Wave animation div
-st.markdown('<div class="wave"></div>', unsafe_allow_html=True)
+# Layered wave animations
+st.markdown("""
+<div class="wave"></div>
+<div class="wave wave2"></div>
+""", unsafe_allow_html=True)
 
 # About section using tabs
 st.markdown("<br>", unsafe_allow_html=True)
