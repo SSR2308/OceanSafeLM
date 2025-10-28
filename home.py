@@ -70,7 +70,7 @@ st.sidebar.info("Select a page to explore!")
 # ---------------------------
 st.markdown("""
 <div style='text-align: center; color: white;'>
-    <h1 style='font-size: 3em;'>Beach Safety Chatbot 🏖️</h1>
+    <h1 style='font-size: 3em;'>Ocean Safe 🏖️</h1>
     <p style='font-size: 1.2em;'>Your intelligent companion for safe beach adventures!</p>
 </div>
 """, unsafe_allow_html=True)
