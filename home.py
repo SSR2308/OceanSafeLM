@@ -17,7 +17,7 @@ video_url = "https://github.com/SSR2308/OceanSafeLM/blob/9761d751ca32b424d92cc29
 
 st.markdown(f"""
 <style>
-/* Hide sidebar during splash */
+/* Initially hide sidebar */
 [data-testid="stSidebar"] {{
     display: none !important;
 }}
@@ -50,8 +50,28 @@ st.markdown(f"""
         visibility: hidden;
     }}
 }}
+
+/* Hamburger toggle button */
+#toggleSidebar {{
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 10000;
+    width: 35px;
+    height: 30px;
+    cursor: pointer;
+}}
+
+#toggleSidebar div {{
+    width: 100%;
+    height: 5px;
+    background-color: #023e8a;
+    margin: 6px 0;
+    transition: 0.4s;
+}}
 </style>
 
+<!-- Splash container -->
 <div id="splash">
     <video autoplay muted playsinline>
         <source src="{video_url}" type="video/mp4">
@@ -59,27 +79,37 @@ st.markdown(f"""
     </video>
 </div>
 
+<!-- Hamburger button -->
+<div id="toggleSidebar" onclick="toggleSidebar()">
+  <div></div>
+  <div></div>
+  <div></div>
+</div>
+
 <script>
-// Remove splash from DOM and restore sidebar after fade
+// Remove splash after video duration and fade
 setTimeout(function(){{
     var splash = document.getElementById("splash");
-    if(splash) {{
-        splash.remove();
-    }}
-    // Show sidebar again
+    if(splash) splash.remove();
+}}, 5000);
+
+// Function to toggle sidebar
+function toggleSidebar() {{
     const sidebar = document.querySelector('[data-testid="stSidebar"]');
     if(sidebar) {{
-        sidebar.style.display = 'block';
+        if(sidebar.style.display === 'block') {{
+            sidebar.style.display = 'none';
+        }} else {{
+            sidebar.style.display = 'block';
+        }}
     }}
-}}, 5000);  // video duration + fade
+}}
 </script>
 """, unsafe_allow_html=True)
 
 # ---------------------------
 # Main Homepage Content
 # ---------------------------
-
-# Inject custom CSS for cards and styling
 with open("styles.css") as f:
     st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
 
