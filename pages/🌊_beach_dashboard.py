@@ -1,4 +1,3 @@
-
 import streamlit as st
 import pandas as pd
 import requests
@@ -64,15 +63,15 @@ def summarize_tides(tide_df):
         return pd.DataFrame()
     df = tide_df.copy()
     df['diff'] = df['Tide (ft)'].diff().fillna(0)
-
+    
     high_tides = df[(df['diff'] > 0) & (df['diff'].shift(-1) < 0)]
     low_tides = df[(df['diff'] < 0) & (df['diff'].shift(-1) > 0)]
-
+    
     summary = pd.concat([
         pd.DataFrame({"Time": high_tides['t'], "Tide (ft)": high_tides['Tide (ft)'], "Type": "High Tide"}),
         pd.DataFrame({"Time": low_tides['t'], "Tide (ft)": low_tides['Tide (ft)'], "Type": "Low Tide"})
     ]).sort_values("Time")
-
+    
     summary['Time'] = summary['Time'].dt.strftime("%I:%M %p")
     summary['Tide (ft)'] = summary['Tide (ft)'].round(2)
     return summary
@@ -131,25 +130,38 @@ beaches = {
     },
     "Huntington Beach": {
         "lat": 33.6595, "lon": -117.9988, "station": "9411270",
-        "image": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&h=400&fit=crop",
         "image": "https://www.redfin.com/blog/wp-content/uploads/2023/12/GettyImages-1812336731.jpg",
         "description": "Also known as Surf City USA, world-famous for surfing.",
         "fun_facts": [
             "Hosts the US Open of Surfing.",
-@@ -146,7 +146,7 @@
+            "Pier extends 1,850 feet into the ocean.",
+            "Great for volleyball and beach events."
+        ],
+        "visitor_info": {
+            "Dogs Allowed": "No",
+            "Parking": "Paid, free 8 PM–6 AM",
+            "Beach Hours": "6 AM – 10 PM",
+            "Nearby Amenities": "Lifeguard Station, Food, Restrooms"
+        }
     },
     "Newport Beach": {
         "lat": 33.6189, "lon": -117.9290, "station": "9411340",
-        "image": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&h=400&fit=crop",
         "image": "https://static.independent.co.uk/2023/07/27/12/iStock-1210240213%20%281%29.jpg",
         "description": "Offers wide sandy beaches and a bustling harbor.",
         "fun_facts": [
             "Famous for Newport Harbor boating.",
-@@ -162,188 +162,188 @@
+            "Home to Balboa Fun Zone amusement area.",
+            "Popular for whale watching."
+        ],
+        "visitor_info": {
+            "Dogs Allowed": "Yes, on leash",
+            "Parking": "Paid parking",
+            "Beach Hours": "6 AM – 10 PM",
+            "Nearby Amenities": "Lifeguard Station, Food, Restrooms"
+        }
     },
     "Laguna Beach": {
         "lat": 33.5427, "lon": -117.7854, "station": "9411340",
-        "image": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&h=400&fit=crop",
         "image": "https://cdn.britannica.com/37/189937-050-478BECD3/Night-view-Laguna-Beach-California.jpg",
         "description": "Known for art galleries, tide pools, and dramatic cliffs.",
         "fun_facts": [
@@ -217,7 +229,7 @@ if not tide_df.empty:
         st.table(tide_summary)
     else:
         st.info("No high/low tide points found for today.")
-
+    
     tide_df['Tide (ft)'] = tide_df['Tide (ft)'].round(2)
     with st.expander("📈 Show Tide Graph"):
         fig = px.line(
