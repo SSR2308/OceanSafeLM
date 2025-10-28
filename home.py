@@ -1,5 +1,4 @@
 import streamlit as st
-import time
 
 # ---------------------------
 # Page Config
@@ -12,20 +11,13 @@ st.set_page_config(
 )
 
 # ---------------------------
-# Splash Screen (Fullscreen Video with Fade-out)
+# Fullscreen Splash Animation (with flex centering)
 # ---------------------------
-
 video_url = "https://github.com/SSR2308/OceanSafeLM/blob/9761d751ca32b424d92cc29eba0c179d212e7127/bc8c-f169-4534-a82d-acc2fad66609.mp4?raw=true"
 
 st.markdown(f"""
 <style>
-/* Hide main content initially */
-#main-content {{
-    opacity: 0;
-    transition: opacity 1s ease;
-}}
-
-/* Splash container */
+/* Splash fullscreen container */
 #splash {{
     position: fixed;
     top: 0;
@@ -40,7 +32,13 @@ st.markdown(f"""
     animation: fadeout 1s ease 4s forwards;
 }}
 
-/* Fade out animation */
+/* Video inside splash */
+#splash video {{
+    max-width: 80%;
+    max-height: 80%;
+}}
+
+/* Fade-out animation */
 @keyframes fadeout {{
     to {{
         opacity: 0;
@@ -48,10 +46,10 @@ st.markdown(f"""
     }}
 }}
 
-/* Center video */
-#splash video {{
-    max-width: 80%;
-    max-height: 80%;
+/* Hide main content initially */
+#main-content {{
+    opacity: 0;
+    transition: opacity 1s ease;
 }}
 </style>
 
@@ -63,7 +61,7 @@ st.markdown(f"""
 </div>
 
 <script>
-// Show main content after video + fade duration
+// Show main content after video duration + fade
 setTimeout(function(){{
     document.getElementById("main-content").style.opacity = "1";
 }}, 5000);
@@ -73,15 +71,17 @@ setTimeout(function(){{
 # ---------------------------
 # Main Homepage Content
 # ---------------------------
-
-# Create a container for main content so we can fade it in
 main_container = st.container()
 with main_container:
     main_container.markdown('<div id="main-content">', unsafe_allow_html=True)
 
-    # Inject custom CSS
+    # Inject custom CSS (remove any blue highlights)
     with open("styles.css") as f:
         st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
+
+    # Sidebar
+    st.sidebar.header("Navigation")
+    st.sidebar.info("Select a page to explore!")
 
     # Hero section
     st.markdown("""
