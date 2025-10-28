@@ -7,28 +7,36 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# --- Splash Screen with Animation ---
+# --- Splash Screen with Fullscreen White Background ---
 splash_html = """
 <style>
-/* Fullscreen white background for splash */
+/* Fullscreen white background covering everything */
 #splash {
     position: fixed;
     top: 0; left: 0;
-    width: 100%; height: 100%;
+    width: 100vw; height: 100vh;
     background-color: white;
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 9999;
 }
+
+/* Video styling */
 #splash video {
     max-width: 80%;
     max-height: 80%;
     border-radius: 15px;
     box-shadow: 0 8px 20px rgba(0,0,0,0.3);
 }
+
+/* Hide Streamlit sidebar and header while splash is active */
+#MainMenu, header, .css-18e3th9, .css-1v3fvcr {
+    visibility: hidden;
+}
+
 body {
-    overflow: hidden; /* Disable scroll while splash */
+    overflow: hidden; /* disable scroll during splash */
 }
 </style>
 
@@ -43,8 +51,14 @@ body {
 var video = document.getElementById('splashVideo');
 video.onended = function() {
     var splash = document.getElementById('splash');
-    splash.style.display = 'none';
-    document.body.style.overflow = 'auto';  // Re-enable scrolling after splash
+    splash.style.transition = 'opacity 1s';
+    splash.style.opacity = 0;
+    setTimeout(function() {
+        splash.remove();
+        document.body.style.overflow = 'auto';  // re-enable scrolling
+        // show sidebar and header
+        document.querySelectorAll('#MainMenu, header, .css-18e3th9, .css-1v3fvcr').forEach(el => el.style.visibility = 'visible');
+    }, 1000);
 };
 </script>
 """
