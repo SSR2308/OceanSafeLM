@@ -195,7 +195,7 @@ beach_coords = beaches[selected_beach]
 # ---------------------------
 # Beach Image and Description
 # ---------------------------
-st.image(beach_coords["image"], use_column_width=True, caption=selected_beach)
+st.image(beach_coords["image"], use_container_width=True, caption=selected_beach)
 st.subheader(f"About {selected_beach}")
 st.write(beach_coords["description"])
 
@@ -276,72 +276,65 @@ components.html(f"""
     <div id='map' style='width:100%; height:650px;'></div>
     <script>
         mapboxgl.accessToken = '{MAPBOX_TOKEN}';
-
-        navigator.geolocation.getCurrentPosition(successLocation, errorLocation, {{
-            enableHighAccuracy: true
+        
+        const center = [{beach_coords['lon']}, {beach_coords['lat']}]; // fallback
+        const map = new mapboxgl.Map({{
+            container: 'map',
+            style: 'mapbox://styles/mapbox/streets-v11',
+            center: center,
+            zoom: 14
         }});
+        map.addControl(new mapboxgl.NavigationControl());
 
-        function successLocation(position) {{
-            setupMap([position.coords.longitude, position.coords.latitude])
-        }}
-
-        function errorLocation() {{
-            setupMap([{beach_coords['lon']}, {beach_coords['lat']}])
-        }}
-
-        function setupMap(center) {{
-            const map = new mapboxgl.Map({{
-                container: 'map',
-                style: 'mapbox://styles/mapbox/streets-v11',
-                center: center,
-                zoom: 14
+        // Attempt to get user location
+        if (navigator.geolocation) {{
+            navigator.geolocation.getCurrentPosition(function(pos){{
+                const userCoords = [pos.coords.longitude, pos.coords.latitude];
+                map.setCenter(userCoords);
+                new mapboxgl.Marker({{color:'blue'}})
+                    .setLngLat(userCoords)
+                    .addTo(map);
+            }}, function(err){{
+                console.log("Geolocation failed, using default beach center.");
+                new mapboxgl.Marker({{color:'blue'}})
+                    .setLngLat(center)
+                    .addTo(map);
             }});
-
-            const nav = new mapboxgl.NavigationControl();
-            map.addControl(nav);
-
-            const userMarker = new mapboxgl.Marker({{color:'blue'}})
+        }} else {{
+            console.log("Geolocation not supported, using default beach center.");
+            new mapboxgl.Marker({{color:'blue'}})
                 .setLngLat(center)
                 .addTo(map);
-
-            navigator.geolocation.watchPosition(function(pos){{
-                const lon = pos.coords.longitude;
-                const lat = pos.coords.latitude;
-                userMarker.setLngLat([lon, lat]);
-                if(window.directions) {{
-                    window.directions.setOrigin([lon, lat]);
-                }}
-            }}, function(err){{ console.error(err); }}, {{ enableHighAccuracy:true }});
-
-            const hazards = {hazard_data_json};
-            hazards.forEach(h => {{
-                if(h.beach == "{selected_beach}") {{
-                    new mapboxgl.Marker({{color:'orange'}})
-                        .setLngLat([h.lon, h.lat])
-                        .setPopup(new mapboxgl.Popup().setText(h.hazard))
-                        .addTo(map);
-                }}
-            }});
-
-            map.on('click', function(e) {{
-                const lat = e.lngLat.lat;
-                const lon = e.lngLat.lng;
-                const hazard = prompt("Enter hazard type (e.g., Jellyfish, Trash, High surf):");
-                if(hazard) {{
-                    fetch("", {{
-                        method: "POST",
-                        headers: {{ "Content-Type": "application/json" }},
-                        body: JSON.stringify({{lat:lat, lon:lon, hazard: hazard, beach: "{selected_beach}"}})
-                    }});
-                    new mapboxgl.Marker({{color:'orange'}})
-                        .setLngLat([lon, lat])
-                        .setPopup(new mapboxgl.Popup().setText(hazard))
-                        .addTo(map);
-                }}
-            }});
-
-            {"window.directions = new MapboxDirections({accessToken: mapboxgl.accessToken, unit:'imperial', profile:'mapbox/walking'}); map.addControl(window.directions, 'top-left'); window.directions.setDestination([" + str(beach_coords['lon']) + "," + str(beach_coords['lat']) + "]);" if show_directions else ""}
         }}
+
+        const hazards = {hazard_data_json};
+        hazards.forEach(h => {{
+            if(h.beach == "{selected_beach}") {{
+                new mapboxgl.Marker({{color:'orange'}})
+                    .setLngLat([h.lon, h.lat])
+                    .setPopup(new mapboxgl.Popup().setText(h.hazard))
+                    .addTo(map);
+            }}
+        }});
+
+        map.on('click', function(e) {{
+            const lat = e.lngLat.lat;
+            const lon = e.lngLat.lng;
+            const hazard = prompt("Enter hazard type (e.g., Jellyfish, Trash, High surf):");
+            if(hazard) {{
+                fetch("", {{
+                    method: "POST",
+                    headers: {{ "Content-Type": "application/json" }},
+                    body: JSON.stringify({{lat:lat, lon:lon, hazard: hazard, beach: "{selected_beach}"}})
+                }});
+                new mapboxgl.Marker({{color:'orange'}})
+                    .setLngLat([lon, lat])
+                    .setPopup(new mapboxgl.Popup().setText(hazard))
+                    .addTo(map);
+            }}
+        }});
+
+        {"window.directions = new MapboxDirections({accessToken: mapboxgl.accessToken, unit:'imperial', profile:'mapbox/walking'}); map.addControl(window.directions, 'top-left'); window.directions.setDestination([" + str(beach_coords['lon']) + "," + str(beach_coords['lat']) + "]);" if show_directions else ""}
     </script>
 </body>
 """, height=650)
