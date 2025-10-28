@@ -278,7 +278,7 @@ st.markdown(
 # Map Section
 # ---------------------------
 hazard_data_json = json.dumps(st.session_state["hazard_reports"])
-show_directions = st.checkbox("Show Directions", key="directions_toggle")
+show_directions = st.checkbox("Direction to Beach from Current Location", key="directions_toggle")
 
 components.html(f"""
 <head>
