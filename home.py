@@ -25,26 +25,37 @@ splash_container.markdown(f"""
     width: 100%;
     height: 100%;
     background-color: white;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;  /* push video lower */
-    align-items: center;        
     z-index: 9999;
     animation: fadeout 1s ease 4s forwards;
-    padding-bottom: 150px;    /* adjust space for text */
 ">
+
+    <!-- Centered Video -->
     <video autoplay muted playsinline style="
-        width: 95%;         
-        height: auto;       
-        max-height: 75%;    /* make it larger */
-        margin-bottom: 50px; /* space above text */
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 90%;
+        height: auto;
+        max-height: 75%;
     ">
         <source src="{video_url}" type="video/mp4">
         Your browser does not support the video tag.
     </video>
-    <h1 style='font-family: "Brush Script MT", cursive; font-size: 7em; color: #0077be; text-shadow: 2px 2px 8px rgba(0,0,0,0.5); transform: translateX(30px);'>
+
+    <!-- Bottom-right Text -->
+    <h1 style='
+        position: absolute;
+        bottom: 40px;
+        right: 30px;
+        font-family: "Brush Script MT", cursive;
+        font-size: 7em;
+        color: #0077be;
+        text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+    '>
         Ocean Safe
     </h1>
+
 </div>
 
 <style>
@@ -57,7 +68,7 @@ splash_container.markdown(f"""
 </style>
 """, unsafe_allow_html=True)
 
-time.sleep(5)  # wait for splash duration
+time.sleep(5)
 splash_container.empty()
 
 # ---------------------------
