@@ -37,7 +37,7 @@ splash_container.markdown(f"""
         width: 95%;
         height: auto;
         max-height: 75%;   /* make it larger */
-        margin-bottom: 10px; /* space above text */
+        margin-bottom: -10px; /* space above text */
     ">
         <source src="{video_url}" type="video/mp4">
         Your browser does not support the video tag.
