@@ -4,15 +4,6 @@ import requests
 import json
 import plotly.express as px
 import streamlit.components.v1 as components
-import streamlit as st
-
-# Inject custom CSS
-with open("styles.css") as f:
-    st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
-
-# Add the wave div
-st.markdown('<div class="wave"></div>', unsafe_allow_html=True)
-
 
 # ---------------------------
 # API Keys from Secrets
@@ -86,104 +77,50 @@ def summarize_tides(tide_df):
     return summary
 
 # ---------------------------
-# Beach Data with Images, Descriptions, Facts, Visitor Info
+# Beach Data with Images, Description, Fun Facts, Visitor Info
 # ---------------------------
 beaches = {
     "Santa Monica Pier": {
         "lat": 34.0100, "lon": -118.4950, "station": "9410840",
-        "image": "https://images.squarespace-cdn.com/content/v1/5e0e65adcd39ed279a0402fd/1627422658456-7QKPXTNQ34W2OMBTESCJ/1.jpg?format=2500w",
-        "description": "An iconic landmark offering stunning ocean views, amusement rides, and family-friendly attractions.",
-        "fun_facts": [
-            "Opened in 1909.",
-            "Home to Pacific Park, the only amusement park on a California pier.",
-            "Featured in many films and TV shows."
-        ],
-        "visitor_info": {
-            "Dogs Allowed": "No",
-            "Parking": "Paid; free 8 PM–6 AM",
-            "Beach Hours": "6 AM – 10 PM",
-            "Nearby Amenities": "Restrooms, Food, Lifeguard Station"
-        }
+        "image": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&h=400&fit=crop",
+        "description": "Iconic pier with amusement park, aquarium, and stunning views of the Pacific Ocean.",
+        "fun_facts": ["Home to Pacific Park amusement park.", "Featured in numerous movies and TV shows."],
+        "visitor_info": {"Dogs Allowed": "No", "Parking": "Paid parking lot", "Beach Hours": "6:00 AM - 10:00 PM"}
     },
     "Venice Beach": {
         "lat": 33.9850, "lon": -118.4695, "station": "9410840",
-        "image": "https://drupal-prod.visitcalifornia.com/sites/default/files/styles/fluid_1920/public/VC_California101_VeniceBeach_Stock_RF_638340372_1280x640.jpg.webp?itok=emtWYsp9",
-        "description": "Known for its bohemian spirit, street performers, and bustling boardwalk.",
-        "fun_facts": [
-            "Home to Muscle Beach outdoor gym.",
-            "Venice Canals inspired by Venice, Italy.",
-            "Popular filming location for music videos."
-        ],
-        "visitor_info": {
-            "Dogs Allowed": "Yes, on leash",
-            "Parking": "Paid; free before 8 AM",
-            "Beach Hours": "6 AM – 10 PM",
-            "Nearby Amenities": "Skate Park, Food, Restrooms"
-        }
+        "image": "https://images.unsplash.com/photo-1544215729-3e0ee4c2d3b6?w=1200&h=400&fit=crop",
+        "description": "Famous for its bohemian spirit, street performers, and skate park.",
+        "fun_facts": ["Venice Boardwalk is 2 miles long.", "Known for Muscle Beach outdoor gym."],
+        "visitor_info": {"Dogs Allowed": "Yes, on leash", "Parking": "Street and paid lots", "Beach Hours": "6:00 AM - 10:00 PM"}
     },
     "Malibu Surfrider Beach": {
         "lat": 34.0360, "lon": -118.6880, "station": "9410840",
-        "image": "https://www.worldbeachguide.com/photos/large/malibu-beach-pier-lagoon.jpg",
-        "description": "Famous for perfect waves and surf culture.",
-        "fun_facts": [
-            "Known as 'The First Point' by surfers.",
-            "Part of Malibu Lagoon State Beach.",
-            "Hosts surf competitions."
-        ],
-        "visitor_info": {
-            "Dogs Allowed": "No",
-            "Parking": "Free parking lot, first-come-first-serve",
-            "Beach Hours": "Sunrise to Sunset",
-            "Nearby Amenities": "Lifeguard Station, Restrooms"
-        }
+        "image": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&h=400&fit=crop",
+        "description": "World-renowned surf spot with historic pier and mellow waves.",
+        "fun_facts": ["Home to the Surfrider Foundation.", "Perfect for beginner and intermediate surfers."],
+        "visitor_info": {"Dogs Allowed": "No", "Parking": "Limited street parking", "Beach Hours": "6:00 AM - Sunset"}
     },
     "Huntington Beach": {
         "lat": 33.6595, "lon": -117.9988, "station": "9411270",
-        "image": "https://www.redfin.com/blog/wp-content/uploads/2023/12/GettyImages-1812336731.jpg",
-        "description": "Also known as Surf City USA, world-famous for surfing.",
-        "fun_facts": [
-            "Hosts the US Open of Surfing.",
-            "Pier extends 1,850 feet into the ocean.",
-            "Great for volleyball and beach events."
-        ],
-        "visitor_info": {
-            "Dogs Allowed": "No",
-            "Parking": "Paid, free 8 PM–6 AM",
-            "Beach Hours": "6 AM – 10 PM",
-            "Nearby Amenities": "Lifeguard Station, Food, Restrooms"
-        }
+        "image": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&h=400&fit=crop",
+        "description": "Known as 'Surf City USA' with long sandy beaches and surf culture.",
+        "fun_facts": ["Hosts the US Open of Surfing.", "The pier is 1,850 feet long."],
+        "visitor_info": {"Dogs Allowed": "No", "Parking": "Paid lots & street", "Beach Hours": "6:00 AM - 10:00 PM"}
     },
     "Newport Beach": {
         "lat": 33.6189, "lon": -117.9290, "station": "9411340",
-        "image": "https://static.independent.co.uk/2023/07/27/12/iStock-1210240213%20%281%29.jpg",
-        "description": "Offers wide sandy beaches and a bustling harbor.",
-        "fun_facts": [
-            "Famous for Newport Harbor boating.",
-            "Home to Balboa Fun Zone amusement area.",
-            "Popular for whale watching."
-        ],
-        "visitor_info": {
-            "Dogs Allowed": "Yes, on leash",
-            "Parking": "Paid parking",
-            "Beach Hours": "6 AM – 10 PM",
-            "Nearby Amenities": "Lifeguard Station, Food, Restrooms"
-        }
+        "image": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&h=400&fit=crop",
+        "description": "Popular destination for boating, beaches, and the Balboa Fun Zone.",
+        "fun_facts": ["Balboa Pier and Fun Zone are main attractions.", "Harbor is one of the largest recreational harbors."],
+        "visitor_info": {"Dogs Allowed": "Yes, on leash", "Parking": "Paid lots", "Beach Hours": "6:00 AM - 10:00 PM"}
     },
     "Laguna Beach": {
         "lat": 33.5427, "lon": -117.7854, "station": "9411340",
-        "image": "https://cdn.britannica.com/37/189937-050-478BECD3/Night-view-Laguna-Beach-California.jpg",
-        "description": "Known for art galleries, tide pools, and dramatic cliffs.",
-        "fun_facts": [
-            "Home to the annual Pageant of the Masters.",
-            "Famous for tide pools and snorkeling.",
-            "Coastal cliffs provide scenic viewpoints."
-        ],
-        "visitor_info": {
-            "Dogs Allowed": "Yes, on leash",
-            "Parking": "Paid parking",
-            "Beach Hours": "6 AM – 10 PM",
-            "Nearby Amenities": "Restrooms, Food, Lifeguard Station"
-        }
+        "image": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&h=400&fit=crop",
+        "description": "Artistic beach town with tide pools, coves, and galleries.",
+        "fun_facts": ["Famous for Pageant of the Masters.", "Many tide pools to explore at low tide."],
+        "visitor_info": {"Dogs Allowed": "Yes, on leash", "Parking": "Paid lots & street", "Beach Hours": "6:00 AM - Sunset"}
     }
 }
 
@@ -202,9 +139,9 @@ selected_beach = st.selectbox("Select Beach:", list(beaches.keys()))
 beach_coords = beaches[selected_beach]
 
 # ---------------------------
-# Beach Image and Description
+# Beach Image and Info
 # ---------------------------
-st.image(beach_coords["image"], use_column_width=True, caption=selected_beach)
+st.image(beach_coords["image"], use_container_width=True, caption=selected_beach)
 st.subheader(f"About {selected_beach}")
 st.write(beach_coords["description"])
 
@@ -217,14 +154,14 @@ with st.expander("📍 Visitor Information"):
         st.markdown(f"**{key}:** {value}")
 
 # ---------------------------
-# Weather Metrics
+# Weather Metrics (fixed truncation)
 # ---------------------------
 st.subheader(f"🏖️ {selected_beach} Overview")
 weather = get_weather_data(beach_coords["lat"], beach_coords["lon"])
 cols = st.columns(3)
-cols[0].metric("🌡 Temperature", f"{weather['Temperature (°F)']} °F")
-cols[1].metric("☀ Weather", weather["Weather"])
-cols[2].metric("🕶 UV Index", weather["UV Index"])
+cols[0].metric(label="🌡 Temperature", value=f"{weather['Temperature (°F)']} °F")
+cols[1].metric(label="☀ Weather", value=weather["Weather"])
+cols[2].metric(label="🕶 UV Index", value=weather["UV Index"])
 
 # ---------------------------
 # Tide Summary and Chart
@@ -260,7 +197,7 @@ else:
     st.info("No tide data available for this beach.")
 
 # ---------------------------
-# Hazard Reporting Section
+# Hazard Reporting
 # ---------------------------
 st.subheader("📢 Report a Hazard")
 st.markdown(
@@ -295,64 +232,4 @@ components.html(f"""
         }}
 
         function errorLocation() {{
-            setupMap([{beach_coords['lon']}, {beach_coords['lat']}])
-        }}
-
-        function setupMap(center) {{
-            const map = new mapboxgl.Map({{
-                container: 'map',
-                style: 'mapbox://styles/mapbox/streets-v11',
-                center: center,
-                zoom: 14
-            }});
-
-            const nav = new mapboxgl.NavigationControl();
-            map.addControl(nav);
-
-            const userMarker = new mapboxgl.Marker({{color:'blue'}})
-                .setLngLat(center)
-                .addTo(map);
-
-            navigator.geolocation.watchPosition(function(pos){{
-                const lon = pos.coords.longitude;
-                const lat = pos.coords.latitude;
-                userMarker.setLngLat([lon, lat]);
-                if(window.directions) {{
-                    window.directions.setOrigin([lon, lat]);
-                }}
-            }}, function(err){{ console.error(err); }}, {{ enableHighAccuracy:true }});
-
-            const hazards = {hazard_data_json};
-            hazards.forEach(h => {{
-                if(h.beach == "{selected_beach}") {{
-                    new mapboxgl.Marker({{color:'orange'}})
-                        .setLngLat([h.lon, h.lat])
-                        .setPopup(new mapboxgl.Popup().setText(h.hazard))
-                        .addTo(map);
-                }}
-            }});
-
-            map.on('click', function(e) {{
-                const lat = e.lngLat.lat;
-                const lon = e.lngLat.lng;
-                const hazard = prompt("Enter hazard type (e.g., Jellyfish, Trash, High surf):");
-                if(hazard) {{
-                    fetch("", {{
-                        method: "POST",
-                        headers: {{ "Content-Type": "application/json" }},
-                        body: JSON.stringify({{lat:lat, lon:lon, hazard: hazard, beach: "{selected_beach}"}})
-                    }});
-                    new mapboxgl.Marker({{color:'orange'}})
-                        .setLngLat([lon, lat])
-                        .setPopup(new mapboxgl.Popup().setText(hazard))
-                        .addTo(map);
-                }}
-            }});
-
-            {"window.directions = new MapboxDirections({accessToken: mapboxgl.accessToken, unit:'imperial', profile:'mapbox/walking'}); map.addControl(window.directions, 'top-left'); window.directions.setDestination([" + str(beach_coords['lon']) + "," + str(beach_coords['lat']) + "]);" if show_directions else ""}
-        }}
-    </script>
-</body>
-""", height=650)
-
-st.write("🟢 Your location updates live (blue marker). Click the map to report hazards. If 'Show Directions' is toggled on, navigation automatically starts.")
+            setupMap([{
