@@ -6,7 +6,7 @@ st.set_page_config(
     layout="wide"
 )
 
-# Inject custom CSS for waves and styling
+# Inject custom CSS for wave and card styling
 with open("styles.css") as f:
     st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
 
@@ -20,43 +20,41 @@ st.markdown("""
 
 st.image(
     "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&h=400&fit=crop",
-    use_column_width=True,
+    use_container_width=True,
     caption="Stay Safe at the Beach"
 )
 
 # Wave animation div
 st.markdown('<div class="wave"></div>', unsafe_allow_html=True)
 
-# About section
+# About section using tabs
 st.markdown("<br>", unsafe_allow_html=True)
-st.markdown("""
-<div class="info-card">
-<h2>🌊 What is this about?</h2>
-<p>Welcome to <strong>Ocean Safe</strong>. Ask Tidebot any beach-related questions and get:</p>
-<ul>
-<li>🌡 Temperature, Weather & UV forecasts</li>
-<li>🌊 Tide patterns for the day</li>
-<li>🚨 Live hazard reports</li>
-<li>🗺 Live navigation to beaches</li>
-</ul>
-<p>Tidebot helps you:</p>
-<ul>
-<li>🚨 Identify hazards</li>
-<li>💡 Get instant safety info</li>
-<li>🏊 Learn water & marine life safety</li>
-<li>☀️ Sun protection tips</li>
-<li>🆘 Emergency advice</li>
-</ul>
-</div>
-""", unsafe_allow_html=True)
+tabs = st.tabs(["🌟 Overview", "🚨 Features", "💡 Tidebot Helps You"])
 
-# CTA Button
-st.markdown("<br>", unsafe_allow_html=True)
-st.markdown("""
-<div style='text-align:center;'>
-<a href='/Beach Dashboard' class='cta-button'>Go to Beach Dashboard 🌴</a>
-</div>
-""", unsafe_allow_html=True)
+with tabs[0]:
+    st.markdown("""
+    Welcome to **Ocean Safe**. Ask Tidebot any beach-related questions and get accurate safety info!
+    Explore weather, tide patterns, hazards, and navigation to beaches.
+    """)
+
+with tabs[1]:
+    st.markdown("""
+    **Features Include:**  
+    - 🌡 Temperature, Weather & UV forecasts  
+    - 🌊 Tide patterns for the day  
+    - 🚨 Live hazard reports  
+    - 🗺 Live navigation to beaches
+    """)
+
+with tabs[2]:
+    st.markdown("""
+    **Tidebot Helps You:**  
+    - 🚨 Identify potential hazards  
+    - 💡 Get instant answers to beach safety questions  
+    - 🏊 Learn about water & marine life safety  
+    - ☀️ Sun protection tips  
+    - 🆘 Emergency advice for beach incidents
+    """)
 
 # Footer
 st.markdown("<br><br>", unsafe_allow_html=True)
