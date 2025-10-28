@@ -17,6 +17,11 @@ video_url = "https://github.com/SSR2308/OceanSafeLM/blob/9761d751ca32b424d92cc29
 
 st.markdown(f"""
 <style>
+/* Hide sidebar during splash */
+[data-testid="stSidebar"] {{
+    display: none !important;
+}}
+
 /* Splash fullscreen container */
 #splash {{
     position: fixed;
@@ -73,7 +78,7 @@ setTimeout(function(){{
 with open("styles.css") as f:
     st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
 
-# Show sidebar
+# Show sidebar now (optional)
 st.sidebar.header("Navigation")
 st.sidebar.info("Select a page to explore!")
 
