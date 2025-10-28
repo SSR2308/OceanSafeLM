@@ -78,43 +78,97 @@ beaches = {
         "lat": 34.0100, "lon": -118.4950, "station": "9410840",
         "image": "https://images.squarespace-cdn.com/content/v1/5e0e65adcd39ed279a0402fd/1627422658456-7QKPXTNQ34W2OMBTESCJ/1.jpg?format=2500w",
         "description": "An iconic landmark offering stunning ocean views, amusement rides, and family-friendly attractions.",
-        "fun_facts": ["Opened in 1909.", "Home to Pacific Park, the only amusement park on a California pier.", "Featured in many films and TV shows."],
-        "visitor_info": {"Dogs Allowed":"No", "Parking":"Paid; free 8 PM–6 AM", "Beach Hours":"6 AM – 10 PM", "Nearby Amenities":"Restrooms, Food, Lifeguard Station"}
+        "fun_facts": [
+            "Opened in 1909.",
+            "Home to Pacific Park, the only amusement park on a California pier.",
+            "Featured in many films and TV shows."
+        ],
+        "visitor_info": {
+            "Dogs Allowed":"No",
+            "Parking":"Paid; free 8 PM–6 AM",
+            "Beach Hours":"6 AM – 10 PM",
+            "Nearby Amenities":"Restrooms, Food, Lifeguard Station"
+        }
     },
     "Venice Beach": {
         "lat": 33.9850, "lon": -118.4695, "station": "9410840",
         "image": "https://drupal-prod.visitcalifornia.com/sites/default/files/styles/fluid_1920/public/VC_California101_VeniceBeach_Stock_RF_638340372_1280x640.jpg.webp?itok=emtWYsp9",
         "description": "Known for its bohemian spirit, street performers, and bustling boardwalk.",
-        "fun_facts": ["Home to Muscle Beach outdoor gym.", "Venice Canals inspired by Venice, Italy.", "Popular filming location for music videos."],
-        "visitor_info": {"Dogs Allowed":"Yes, on leash", "Parking":"Paid; free before 8 AM", "Beach Hours":"6 AM – 10 PM", "Nearby Amenities":"Skate Park, Food, Restrooms"}
+        "fun_facts": [
+            "Home to Muscle Beach outdoor gym.",
+            "Venice Canals inspired by Venice, Italy.",
+            "Popular filming location for music videos."
+        ],
+        "visitor_info": {
+            "Dogs Allowed":"Yes, on leash",
+            "Parking":"Paid; free before 8 AM",
+            "Beach Hours":"6 AM – 10 PM",
+            "Nearby Amenities":"Skate Park, Food, Restrooms"
+        }
     },
     "Malibu Surfrider Beach": {
         "lat": 34.0360, "lon": -118.6880, "station": "9410840",
         "image": "https://www.worldbeachguide.com/photos/large/malibu-beach-pier-lagoon.jpg",
         "description": "Famous for perfect waves and surf culture.",
-        "fun_facts": ["Known as 'The First Point' by surfers.", "Part of Malibu Lagoon State Beach.", "Hosts surf competitions."],
-        "visitor_info": {"Dogs Allowed":"No", "Parking":"Free parking lot, first-come-first-serve", "Beach Hours":"Sunrise to Sunset", "Nearby Amenities":"Lifeguard Station, Restrooms"}
+        "fun_facts": [
+            "Known as 'The First Point' by surfers.",
+            "Part of Malibu Lagoon State Beach.",
+            "Hosts surf competitions."
+        ],
+        "visitor_info": {
+            "Dogs Allowed":"No",
+            "Parking":"Free parking lot, first-come-first-serve",
+            "Beach Hours":"Sunrise to Sunset",
+            "Nearby Amenities":"Lifeguard Station, Restrooms"
+        }
     },
     "Huntington Beach": {
         "lat": 33.6595, "lon": -117.9988, "station": "9411270",
         "image": "https://www.redfin.com/blog/wp-content/uploads/2023/12/GettyImages-1812336731.jpg",
         "description": "Also known as Surf City USA, world-famous for surfing.",
-        "fun_facts": ["Hosts the US Open of Surfing.", "Pier extends 1,850 feet into the ocean.", "Great for volleyball and beach events."],
-        "visitor_info": {"Dogs Allowed":"No", "Parking":"Paid, free 8 PM–6 AM", "Beach Hours":"6 AM – 10 PM", "Nearby Amenities":"Lifeguard Station, Food, Restrooms"}
+        "fun_facts": [
+            "Hosts the US Open of Surfing.",
+            "Pier extends 1,850 feet into the ocean.",
+            "Great for volleyball and beach events."
+        ],
+        "visitor_info": {
+            "Dogs Allowed":"No",
+            "Parking":"Paid, free 8 PM–6 AM",
+            "Beach Hours":"6 AM – 10 PM",
+            "Nearby Amenities":"Lifeguard Station, Food, Restrooms"
+        }
     },
     "Newport Beach": {
         "lat": 33.6189, "lon": -117.9290, "station": "9411340",
         "image": "https://static.independent.co.uk/2023/07/27/12/iStock-1210240213%20%281%29.jpg",
         "description": "Offers wide sandy beaches and a bustling harbor.",
-        "fun_facts": ["Famous for Newport Harbor boating.", "Home to Balboa Fun Zone amusement area.", "Popular for whale watching."],
-        "visitor_info": {"Dogs Allowed":"Yes, on leash", "Parking":"Paid parking", "Beach Hours":"6 AM – 10 PM", "Nearby Amenities":"Lifeguard Station, Food, Restrooms"}
+        "fun_facts": [
+            "Famous for Newport Harbor boating.",
+            "Home to Balboa Fun Zone amusement area.",
+            "Popular for whale watching."
+        ],
+        "visitor_info": {
+            "Dogs Allowed":"Yes, on leash",
+            "Parking":"Paid parking",
+            "Beach Hours":"6 AM – 10 PM",
+            "Nearby Amenities":"Lifeguard Station, Food, Restrooms"
+        }
     },
     "Laguna Beach": {
         "lat": 33.5427, "lon": -117.7854, "station": "9411340",
         "image": "https://cdn.britannica.com/37/189937-050-478BECD3/Night-view-Laguna-Beach-California.jpg",
         "description": "Known for art galleries, tide pools, and dramatic cliffs.",
-        "fun_facts": ["Home to the annual Pageant of the Masters.", "Famous for tide pools and snorkeling.", "Coastal cliffs provide scenic viewpoints."],
-        "visitor_info": {"Dogs Allowed":"Yes, on leash", "Parking":"Paid parking", "Beach Hours":"6 AM – 10 PM", "Nearby Amenities":"Restrooms, Food, Lifeguard Station"}
+        "fun_facts": [
+            "Home to the annual Pageant of the Masters.",
+            "Famous for tide pools and snorkeling.",
+            "Coastal cliffs provide scenic viewpoints."
+        ],
+        "visitor_info": {
+            "Dogs Allowed":"Yes, on leash",
+            "Parking":"Paid parking",
+            "Beach Hours":"6 AM – 10 PM",
+            "Nearby Amenities":"Restrooms, Food, Lifeguard Station"
+        }
     }
 }
 
@@ -183,7 +237,6 @@ if not tide_df.empty:
         st.plotly_chart(fig, use_container_width=True)
 else:
     st.info("No tide data available for this beach.")
-
 # ---------------------------
 # Hazard Reporting Map
 # ---------------------------
@@ -205,7 +258,7 @@ components.html(f"""
 <script>
 mapboxgl.accessToken = '{MAPBOX_TOKEN}';
 
-// Initialize map
+// Initialize map centered at beach coordinates
 const map = new mapboxgl.Map({{
     container: 'map',
     style: 'mapbox://styles/mapbox/streets-v11',
@@ -216,7 +269,7 @@ const map = new mapboxgl.Map({{
 // Add navigation control
 map.addControl(new mapboxgl.NavigationControl());
 
-// Add geolocate control (user location)
+// Add geolocate control (user's live location)
 const geolocate = new mapboxgl.GeolocateControl({{
     positionOptions: {{ enableHighAccuracy: true }},
     trackUserLocation: true,
