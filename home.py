@@ -8,7 +8,7 @@ st.set_page_config(
     page_title="Ocean Safe",
     page_icon="🏖️",
     layout="wide",
-    initial_sidebar_state="collapsed"  # hide sidebar during splash
+    initial_sidebar_state="collapsed"
 )
 
 # ---------------------------
@@ -16,45 +16,65 @@ st.set_page_config(
 # ---------------------------
 splash_container = st.empty()
 
-# Use your GitHub raw link for MP4
 video_url = "https://github.com/SSR2308/OceanSafeLM/blob/9761d751ca32b424d92cc29eba0c179d212e7127/bc8c-f169-4534-a82d-acc2fad66609.mp4?raw=true"
 
-# Center video and make background white
+# Make video fullscreen, remove scrollbars and default blue styling
 splash_container.markdown(f"""
+<style>
+body {{
+    margin: 0;
+    overflow: hidden; /* remove scroll */
+    background-color: white; /* white background */
+}}
+.stApp {{
+    background-color: white;
+}}
+</style>
+
 <div style="
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
     background-color: white;
+    z-index: 9999;
 ">
-    <video autoplay muted playsinline style="max-width: 80%; max-height: 80%;">
+    <video autoplay muted playsinline style="width:100vw; height:100vh; object-fit:cover;">
         <source src="{video_url}" type="video/mp4">
         Your browser does not support the video tag.
     </video>
 </div>
 """, unsafe_allow_html=True)
 
-# Wait for video duration (replace 5 with actual seconds of your video)
+# Wait for video duration (adjust seconds to match your video)
 time.sleep(5)
 
-# Clear splash container
+# Remove splash
 splash_container.empty()
 
 # ---------------------------
 # Main Homepage Content
 # ---------------------------
-# Inject custom CSS for cards and styling
-with open("styles.css") as f:
-    st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
+# Inject custom CSS for cards, styling, remove default Streamlit colors
+st.markdown("""
+<style>
+body { background-color: white; }
+.stApp { background-color: white; }
+h1, h2, h3, p { color: #023e8a; } /* change headings to dark blue */
+</style>
+""", unsafe_allow_html=True)
 
-# Show sidebar now (optional)
+# Optional sidebar
 st.sidebar.header("Navigation")
 st.sidebar.info("Select a page to explore!")
 
 # Hero section
 st.markdown("""
-<div style='position: relative; text-align: center; color: #023e8a;'>
+<div style='text-align: center;'>
     <h1 style='font-size: 3em; margin-bottom: 0;'>Beach Safety Chatbot 🏖️</h1>
     <p style='font-size: 1.2em; margin-top: 0;'>Your intelligent companion for safe beach adventures!</p>
 </div>
