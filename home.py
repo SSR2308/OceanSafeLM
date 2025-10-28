@@ -16,7 +16,7 @@ st.set_page_config(
 loader_placeholder = st.empty()
 
 # Play MP4 loader animation
-loader_placeholder.video("wave_animation.mp4")  # <-- replace with your file path
+loader_placeholder.video("bc8c-f169-4534-a82d-acc2fad66609.mp4")  # <-- replace with your file path
 
 # Simulate loading time (replace with actual data fetching if needed)
 time.sleep(3)
