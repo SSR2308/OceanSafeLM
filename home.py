@@ -1,77 +1,60 @@
 import streamlit as st
+import time
 
+# ---------------------------
+# Page Config
+# ---------------------------
 st.set_page_config(
     page_title="Ocean Safe",
     page_icon="🏖️",
     layout="wide",
-    initial_sidebar_state="expanded"
+    initial_sidebar_state="collapsed"  # hide sidebar during splash
 )
 
-# --- Splash Screen with Fullscreen White Background ---
-splash_html = """
-<style>
-/* Fullscreen white background covering everything */
-#splash {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100vw; height: 100vh;
-    background-color: white;
+# ---------------------------
+# Fullscreen Splash Animation
+# ---------------------------
+splash_container = st.empty()
+
+# Use your GitHub raw link for MP4
+video_url = "https://github.com/SSR2308/OceanSafeLM/blob/9761d751ca32b424d92cc29eba0c179d212e7127/bc8c-f169-4534-a82d-acc2fad66609.mp4?raw=true"
+
+# Center video and make background white
+splash_container.markdown(f"""
+<div style="
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 9999;
-}
-
-/* Video styling */
-#splash video {
-    max-width: 80%;
-    max-height: 80%;
-    border-radius: 15px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-}
-
-/* Hide Streamlit sidebar and header while splash is active */
-#MainMenu, header, .css-18e3th9, .css-1v3fvcr {
-    visibility: hidden;
-}
-
-body {
-    overflow: hidden; /* disable scroll during splash */
-}
-</style>
-
-<div id="splash">
-    <video id="splashVideo" autoplay muted playsinline>
-        <source src="https://github.com/SSR2308/OceanSafeLM/blob/9761d751ca32b424d92cc29eba0c179d212e7127/bc8c-f169-4534-a82d-acc2fad66609.mp4?raw=true" type="video/mp4">
+    height: 100vh;
+    background-color: white;
+">
+    <video autoplay muted playsinline style="max-width: 80%; max-height: 80%;">
+        <source src="{video_url}" type="video/mp4">
         Your browser does not support the video tag.
     </video>
 </div>
+""", unsafe_allow_html=True)
 
-<script>
-var video = document.getElementById('splashVideo');
-video.onended = function() {
-    var splash = document.getElementById('splash');
-    splash.style.transition = 'opacity 1s';
-    splash.style.opacity = 0;
-    setTimeout(function() {
-        splash.remove();
-        document.body.style.overflow = 'auto';  // re-enable scrolling
-        // show sidebar and header
-        document.querySelectorAll('#MainMenu, header, .css-18e3th9, .css-1v3fvcr').forEach(el => el.style.visibility = 'visible');
-    }, 1000);
-};
-</script>
-"""
+# Wait for video duration (replace 5 with actual seconds of your video)
+time.sleep(5)
 
-st.markdown(splash_html, unsafe_allow_html=True)
+# Clear splash container
+splash_container.empty()
 
-# --- Main Homepage Content ---
+# ---------------------------
+# Main Homepage Content
+# ---------------------------
+# Inject custom CSS for cards and styling
 with open("styles.css") as f:
     st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
 
+# Show sidebar now (optional)
+st.sidebar.header("Navigation")
+st.sidebar.info("Select a page to explore!")
+
 # Hero section
 st.markdown("""
-<div style='position: relative; text-align: center; color: #1e3f66;'>
+<div style='position: relative; text-align: center; color: #023e8a;'>
     <h1 style='font-size: 3em; margin-bottom: 0;'>Beach Safety Chatbot 🏖️</h1>
     <p style='font-size: 1.2em; margin-top: 0;'>Your intelligent companion for safe beach adventures!</p>
 </div>
@@ -84,7 +67,6 @@ st.image(
 )
 
 # About section using tabs
-st.markdown("<br>", unsafe_allow_html=True)
 tabs = st.tabs(["🌟 Overview", "🚨 Features", "💡 Tidebot Helps You"])
 
 with tabs[0]:
