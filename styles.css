@@ -1,7 +1,7 @@
 /* ---------------------------
    Wave Animations
 --------------------------- */
-.wave {
+/* .wave {
     width: 100%;
     height: 80px;
     background: url('https://i.ibb.co/7n1VzTG/wave.png') repeat-x;
@@ -30,7 +30,7 @@
 /* ---------------------------
    Hero Section
 --------------------------- */
-.hero-image {
+/*.hero-image {
     border-radius: 15px;
     box-shadow: 0 6px 20px rgba(0,0,0,0.3);
     margin-bottom: 20px;
@@ -39,9 +39,9 @@
 /* ---------------------------
    Card Styles
 --------------------------- */
-.card {
+/*.card {
     background-color: #ffffffcc; /* semi-transparent white */
-    border-radius: 15px;
+   /* border-radius: 15px;
     padding: 25px;
     box-shadow: 0 4px 15px rgba(0,0,0,0.2);
     transition: transform 0.3s, box-shadow 0.3s;
@@ -66,7 +66,7 @@
 /* ---------------------------
    Info Section Layout
 --------------------------- */
-.info-section {
+/*.info-section {
     display: flex;
     flex-wrap: wrap;
     gap: 20px;
@@ -81,7 +81,7 @@
 /* ---------------------------
    Buttons
 --------------------------- */
-.button {
+/*.button {
     background-color: #0077b6;
     color: #fff !important;
     border: none;
@@ -100,7 +100,7 @@
 /* ---------------------------
    Footer
 --------------------------- */
-.footer {
+/*.footer {
     text-align: center;
     color: gray;
     margin-top: 50px;
@@ -110,7 +110,7 @@
 /* ---------------------------
    Streamlit-specific tweaks
 --------------------------- */
-.stButton>button {
+/*.stButton>button {
     background-color: #0077b6;
     color: white;
     border-radius: 10px;
@@ -131,7 +131,7 @@
 }
 
 /* Loader (like Chicken AI style) */
-.loader {
+/*.loader {
   border: 8px solid #f3f3f3;
   border-top: 8px solid #00aaff;
   border-radius: 50%;
@@ -147,7 +147,7 @@
 }
 
 /* Optional: overlay for fullscreen loader */
-.loader-overlay {
+/*.loader-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -159,5 +159,5 @@
   justify-content: center;
   align-items: center;
 }
-
+*/
 
