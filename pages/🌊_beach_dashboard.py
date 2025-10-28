@@ -59,27 +59,38 @@ def get_tide_data(station_id="9410840"):
 # Tide Summary
 # ---------------------------
 def summarize_tides(tide_df):
-    if tide_df.empty: return pd.DataFrame()
+    if tide_df.empty:
+        return pd.DataFrame()
+
     df = tide_df.copy()
     df['diff'] = df['Tide (ft)'].diff().fillna(0)
+
     high_tides = df[(df['diff'] > 0) & (df['diff'].shift(-1) < 0)]
     low_tides = df[(df['diff'] < 0) & (df['diff'].shift(-1) > 0)]
+
     summary = pd.concat([
-        pd.DataFrame({"Time": high_tides['t'], "Tide (ft)": high_tides['Tide (ft)'], "Type": "High Tide"}),
-        pd.DataFrame({"Time": low_tides['t'], "Tide (ft)": low_tides['Tide (ft)'], "Type": "Low Tide"})
+        pd.DataFrame({
+            "Time": high_tides['t'],
+            "Tide (ft)": high_tides['Tide (ft)'],
+            "Type": "High Tide"
+        }),
+        pd.DataFrame({
+            "Time": low_tides['t'],
+            "Tide (ft)": low_tides['Tide (ft)'],
+            "Type": "Low Tide"
+        })
     ]).sort_values("Time")
+
     summary['Time'] = summary['Time'].dt.strftime("%I:%M %p")
     summary['Tide (ft)'] = summary['Tide (ft)'].round(2)
     return summary
 
 # ---------------------------
-# Beach Data with Images, Descriptions, Facts, Visitor Info
+# Beach Data
 # ---------------------------
 beaches = {
     "Santa Monica Pier": {
-        "lat": 34.0100,
-        "lon": -118.4950,
-        "station": "9410840",
+        "lat": 34.0100, "lon": -118.4950, "station": "9410840",
         "image": "https://images.squarespace-cdn.com/content/v1/5e0e65adcd39ed279a0402fd/1627422658456-7QKPXTNQ34W2OMBTESCJ/1.jpg?format=2500w",
         "description": "An iconic landmark offering stunning ocean views, amusement rides, and family-friendly attractions.",
         "fun_facts": [
@@ -95,9 +106,7 @@ beaches = {
         }
     },
     "Venice Beach": {
-        "lat": 33.9850,
-        "lon": -118.4695,
-        "station": "9410840",
+        "lat": 33.9850, "lon": -118.4695, "station": "9410840",
         "image": "https://drupal-prod.visitcalifornia.com/sites/default/files/styles/fluid_1920/public/VC_California101_VeniceBeach_Stock_RF_638340372_1280x640.jpg.webp?itok=emtWYsp9",
         "description": "Known for its bohemian spirit, street performers, and bustling boardwalk.",
         "fun_facts": [
@@ -113,9 +122,7 @@ beaches = {
         }
     },
     "Malibu Surfrider Beach": {
-        "lat": 34.0360,
-        "lon": -118.6880,
-        "station": "9410840",
+        "lat": 34.0360, "lon": -118.6880, "station": "9410840",
         "image": "https://www.worldbeachguide.com/photos/large/malibu-beach-pier-lagoon.jpg",
         "description": "Famous for perfect waves and surf culture.",
         "fun_facts": [
@@ -131,9 +138,7 @@ beaches = {
         }
     },
     "Huntington Beach": {
-        "lat": 33.6595,
-        "lon": -117.9988,
-        "station": "9411270",
+        "lat": 33.6595, "lon": -117.9988, "station": "9411270",
         "image": "https://www.redfin.com/blog/wp-content/uploads/2023/12/GettyImages-1812336731.jpg",
         "description": "Also known as Surf City USA, world-famous for surfing.",
         "fun_facts": [
@@ -149,9 +154,7 @@ beaches = {
         }
     },
     "Newport Beach": {
-        "lat": 33.6189,
-        "lon": -117.9290,
-        "station": "9411340",
+        "lat": 33.6189, "lon": -117.9290, "station": "9411340",
         "image": "https://static.independent.co.uk/2023/07/27/12/iStock-1210240213%20%281%29.jpg",
         "description": "Offers wide sandy beaches and a bustling harbor.",
         "fun_facts": [
@@ -167,9 +170,7 @@ beaches = {
         }
     },
     "Laguna Beach": {
-        "lat": 33.5427,
-        "lon": -117.7854,
-        "station": "9411340",
+        "lat": 33.5427, "lon": -117.7854, "station": "9411340",
         "image": "https://cdn.britannica.com/37/189937-050-478BECD3/Night-view-Laguna-Beach-California.jpg",
         "description": "Known for art galleries, tide pools, and dramatic cliffs.",
         "fun_facts": [
@@ -190,6 +191,7 @@ beaches = {
 # Streamlit Page Setup
 # ---------------------------
 st.title("🌊 California Beach Safety Dashboard")
+
 if "hazard_reports" not in st.session_state:
     st.session_state["hazard_reports"] = []
 
@@ -205,9 +207,11 @@ beach_coords = beaches[selected_beach]
 st.image(beach_coords["image"], use_column_width=True, caption=selected_beach)
 st.subheader(f"About {selected_beach}")
 st.write(beach_coords["description"])
+
 with st.expander("🌟 Fun Facts"):
     for fact in beach_coords["fun_facts"]:
         st.markdown(f"- {fact}")
+
 with st.expander("📍 Visitor Information"):
     for key, value in beach_coords["visitor_info"].items():
         st.markdown(f"**{key}:** {value}")
@@ -227,18 +231,25 @@ cols[2].metric("🕶 UV Index", weather["UV Index"])
 # ---------------------------
 st.subheader("🌊 Tide Forecast (Next 24 Hours)")
 tide_df = get_tide_data(beach_coords["station"])
+
 if not tide_df.empty:
     tide_summary = summarize_tides(tide_df)
+    
     if not tide_summary.empty:
         st.markdown("**🕒 Upcoming High and Low Tides**")
         st.table(tide_summary)
     else:
         st.info("No high/low tide points found for today.")
+    
     tide_df['Tide (ft)'] = tide_df['Tide (ft)'].round(2)
+    
     with st.expander("📈 Show Tide Graph"):
         fig = px.line(
-            tide_df.head(24), x='t', y='Tide (ft)',
-            title="Tide Levels - Next 24 Hours", markers=True
+            tide_df.head(24),
+            x='t',
+            y='Tide (ft)',
+            title="Tide Levels - Next 24 Hours",
+            markers=True
         )
         fig.update_layout(
             xaxis_title="Time",
@@ -267,7 +278,169 @@ hazard_data_json = json.dumps(st.session_state["hazard_reports"])
 show_directions = st.checkbox("Show Directions", key="directions_toggle")
 
 components.html(f"""
-<!-- Your original Mapbox HTML/JS code goes here -->
+<head>
+<link href='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.css' rel='stylesheet' />
+<script src='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.js'></script>
+<script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.1.0/mapbox-gl-directions.js'></script>
+<link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.1.0/mapbox-gl-directions.css' />
+</head>
+<body>
+<div id='map' style='width:100%; height:650px;'></div>
+<script>
+mapboxgl.accessToken = '{MAPBOX_TOKEN}';
+
+// Helper to compute bounds from an array of [lng,lat] coords
+function coordsToBounds(coords){{
+    if(!coords || coords.length === 0) return null;
+    var minLng = coords[0][0], minLat = coords[0][1], maxLng = coords[0][0], maxLat = coords[0][1];
+    for(var i=1;i<coords.length;i++){{
+        var c = coords[i];
+        if(c[0] < minLng) minLng = c[0];
+        if(c[0] > maxLng) maxLng = c[0];
+        if(c[1] < minLat) minLat = c[1];
+        if(c[1] > maxLat) maxLat = c[1];
+    }}
+    return [[minLng, minLat], [maxLng, maxLat]];
+}}
+
+// Request location and initialize map
+navigator.geolocation.getCurrentPosition(successLocation, errorLocation, {{
+    enableHighAccuracy: true, timeout: 10000
+}});
+
+function successLocation(position){{
+    const userCenter = [position.coords.longitude, position.coords.latitude];
+    setupMap(userCenter, true);
+}}
+
+function errorLocation(){{
+    setupMap([{beach_coords['lon']}, {beach_coords['lat']}], false);
+}}
+
+function setupMap(initialCenter, hasGeolocation){{
+    const map = new mapboxgl.Map({{
+        container: 'map',
+        style: 'mapbox://styles/mapbox/streets-v11',
+        center: initialCenter,
+        zoom: 14
+    }});
+
+    const nav = new mapboxgl.NavigationControl();
+    map.addControl(nav);
+
+    // User marker (blue)
+    const userMarker = new mapboxgl.Marker({{ color: 'blue' }})
+        .setLngLat(initialCenter)
+        .addTo(map);
+
+    // Add hazard markers from Python session_state
+    const hazards = {hazard_data_json};
+    hazards.forEach(h => {{
+        if (h.beach == "{selected_beach}") {{
+            new mapboxgl.Marker({{ color: 'orange' }})
+                .setLngLat([h.lon, h.lat])
+                .setPopup(new mapboxgl.Popup().setText(h.hazard))
+                .addTo(map);
+        }}
+    }});
+
+    // Update user marker live, update directions origin if active
+    navigator.geolocation.watchPosition(function(pos){{
+        const lon = pos.coords.longitude;
+        const lat = pos.coords.latitude;
+        userMarker.setLngLat([lon, lat]);
+        if (window.directionsInstance && typeof window.directionsInstance.setOrigin === 'function') {{
+            try {{
+                window.directionsInstance.setOrigin([lon, lat]);
+            }} catch(e){{ console.warn("directions setOrigin error", e); }}
+        }}
+    }}, function(err){{ console.error("watchPosition error", err); }}, {{ enableHighAccuracy:true }});
+
+    // Click map to report hazards
+    map.on('click', function(e){{
+        const lat = e.lngLat.lat;
+        const lon = e.lngLat.lng;
+        const hazard = prompt("Enter hazard type (e.g., Jellyfish, Trash, High surf):");
+        if(hazard){{
+            fetch("", {{
+                method: "POST",
+                headers: {{ "Content-Type": "application/json" }},
+                body: JSON.stringify({{lat:lat, lon:lon, hazard: hazard, beach: "{selected_beach}"}})
+            }});
+            new mapboxgl.Marker({{color:'orange'}})
+                .setLngLat([lon, lat])
+                .setPopup(new mapboxgl.Popup().setText(hazard))
+                .addTo(map);
+        }}
+    }});
+
+    // Directions control if enabled
+    if ({str(show_directions).lower()}) {{
+        window.directionsInstance = new MapboxDirections({{
+            accessToken: mapboxgl.accessToken,
+            unit: 'imperial',
+            profile: 'mapbox/walking',
+            interactive: true,
+            controls: {{ inputs: true, instructions: true, profileSwitcher: false }},
+            fitBounds: false
+        }});
+        map.addControl(window.directionsInstance, 'top-left');
+        try {{
+            window.directionsInstance.setOrigin(initialCenter);
+            window.directionsInstance.setDestination([{beach_coords['lon']}, {beach_coords['lat']}]);
+        }} catch(e) {{ console.warn("initial setOrigin/setDestination error", e); }}
+
+        let hasFittedRoute = false;
+        if (window.directionsInstance && typeof window.directionsInstance.on === 'function') {{
+            window.directionsInstance.on('route', function(e){{
+                if (!e || !e.route || e.route.length === 0) return;
+                const route = e.route[0];
+                let coords = [];
+
+                if (route.geometry && route.geometry.coordinates) coords = route.geometry.coordinates;
+                else if (route.geometry && route.geometry.type === 'LineString' && route.geometry.coordinates) coords = route.geometry.coordinates;
+                else if (route.legs){{
+                    route.legs.forEach(leg => {{
+                        if (leg.steps){{
+                            leg.steps.forEach(step => {{
+                                if(step.geometry && step.geometry.coordinates) coords = coords.concat(step.geometry.coordinates);
+                            }});
+                        }}
+                    }});
+                }}
+
+                if (!coords || coords.length === 0) {{
+                    if (Array.isArray(route.geometry)) coords = route.geometry;
+                }}
+
+                if (coords && coords.length > 0){{
+                    const bounds = coordsToBounds(coords);
+                    if(bounds){{
+                        map.fitBounds(bounds, {{ padding: 60, linear: true }});
+                        hasFittedRoute = true;
+                    }}
+                }} else {{
+                    try {{
+                        const origin = window.directionsInstance.getOrigin();
+                        const destination = window.directionsInstance.getDestination();
+                        if(origin && destination){{
+                            const o = origin.geometry && origin.geometry.coordinates ? origin.geometry.coordinates : origin;
+                            const d = destination.geometry && destination.geometry.coordinates ? destination.geometry.coordinates : destination;
+                            map.fitBounds([[Math.min(o[0], d[0]), Math.min(o[1], d[1])],
+                                           [Math.max(o[0], d[0]), Math.max(o[1], d[1])]], {{ padding:60 }});
+                        }}
+                    }} catch(err){{ console.warn("fallback fitBounds error", err); }}
+                }}
+            }});
+        }}
+    }}
+}}
+</script>
+</body>
 """, height=650)
 
-st.write("🟢 Your location updates live (blue marker). Click the map to report hazards. If 'Show Directions' is toggled on, a route from your current location → selected beach will appear and the map will fit the entire route (instead of centering only on the beach).")
+st.write(
+    "🟢 Your location updates live (blue marker). "
+    "Click the map to report hazards. If 'Show Directions' is toggled on, "
+    "a route from your current location → selected beach will appear and the map will fit the entire route."
+)
