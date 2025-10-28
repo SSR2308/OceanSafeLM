@@ -105,70 +105,6 @@ beaches = {
             "Beach Hours":"6 AM – 10 PM",
             "Nearby Amenities":"Skate Park, Food, Restrooms"
         }
-    },
-    "Malibu Surfrider Beach": {
-        "lat": 34.0360, "lon": -118.6880, "station": "9410840",
-        "image": "https://www.worldbeachguide.com/photos/large/malibu-beach-pier-lagoon.jpg",
-        "description": "Famous for perfect waves and surf culture.",
-        "fun_facts": [
-            "Known as 'The First Point' by surfers.",
-            "Part of Malibu Lagoon State Beach.",
-            "Hosts surf competitions."
-        ],
-        "visitor_info": {
-            "Dogs Allowed":"No",
-            "Parking":"Free parking lot, first-come-first-serve",
-            "Beach Hours":"Sunrise to Sunset",
-            "Nearby Amenities":"Lifeguard Station, Restrooms"
-        }
-    },
-    "Huntington Beach": {
-        "lat": 33.6595, "lon": -117.9988, "station": "9411270",
-        "image": "https://www.redfin.com/blog/wp-content/uploads/2023/12/GettyImages-1812336731.jpg",
-        "description": "Also known as Surf City USA, world-famous for surfing.",
-        "fun_facts": [
-            "Hosts the US Open of Surfing.",
-            "Pier extends 1,850 feet into the ocean.",
-            "Great for volleyball and beach events."
-        ],
-        "visitor_info": {
-            "Dogs Allowed":"No",
-            "Parking":"Paid, free 8 PM–6 AM",
-            "Beach Hours":"6 AM – 10 PM",
-            "Nearby Amenities":"Lifeguard Station, Food, Restrooms"
-        }
-    },
-    "Newport Beach": {
-        "lat": 33.6189, "lon": -117.9290, "station": "9411340",
-        "image": "https://static.independent.co.uk/2023/07/27/12/iStock-1210240213%20%281%29.jpg",
-        "description": "Offers wide sandy beaches and a bustling harbor.",
-        "fun_facts": [
-            "Famous for Newport Harbor boating.",
-            "Home to Balboa Fun Zone amusement area.",
-            "Popular for whale watching."
-        ],
-        "visitor_info": {
-            "Dogs Allowed":"Yes, on leash",
-            "Parking":"Paid parking",
-            "Beach Hours":"6 AM – 10 PM",
-            "Nearby Amenities":"Lifeguard Station, Food, Restrooms"
-        }
-    },
-    "Laguna Beach": {
-        "lat": 33.5427, "lon": -117.7854, "station": "9411340",
-        "image": "https://cdn.britannica.com/37/189937-050-478BECD3/Night-view-Laguna-Beach-California.jpg",
-        "description": "Known for art galleries, tide pools, and dramatic cliffs.",
-        "fun_facts": [
-            "Home to the annual Pageant of the Masters.",
-            "Famous for tide pools and snorkeling.",
-            "Coastal cliffs provide scenic viewpoints."
-        ],
-        "visitor_info": {
-            "Dogs Allowed":"Yes, on leash",
-            "Parking":"Paid parking",
-            "Beach Hours":"6 AM – 10 PM",
-            "Nearby Amenities":"Restrooms, Food, Lifeguard Station"
-        }
     }
 }
 
@@ -258,8 +194,6 @@ components.html(f"""
 <div id='map' style='width:100%; height:650px;'></div>
 <script>
 mapboxgl.accessToken = '{MAPBOX_TOKEN}';
-
-// Initialize map centered at beach
 const map = new mapboxgl.Map({{
     container: 'map',
     style: 'mapbox://styles/mapbox/streets-v11',
@@ -267,46 +201,23 @@ const map = new mapboxgl.Map({{
     zoom: 14
 }});
 
-// Add navigation controls
 map.addControl(new mapboxgl.NavigationControl());
 
-// Add geolocate control
-const geolocate = new mapboxgl.GeolocateControl({{
-    positionOptions: {{ enableHighAccuracy: true }},
-    trackUserLocation: true,
-    showUserHeading: true
-}});
-map.addControl(geolocate);
-
-// Get user location via browser API
-navigator.geolocation.getCurrentPosition(function(position) {{
-    const lat = position.coords.latitude;
-    const lon = position.coords.longitude;
-    map.setCenter([lon, lat]);
-    if(!userMarker){
-        userMarker = new mapboxgl.Marker({{color:'blue'}}).setLngLat([lon, lat]).addTo(map);
-    }} else {{
-        userMarker.setLngLat([lon, lat]);
-    }}
-}});
-
-
-// Custom blue marker for user location
 let userMarker = null;
-geolocate.on('geolocate', function(event) {{
-    const lng = event.coords.longitude;
-    const lat = event.coords.latitude;
 
-    if(!userMarker) {{
-        userMarker = new mapboxgl.Marker({{ color: 'blue' }})
-            .setLngLat([lng, lat])
+// Get user location immediately
+if(navigator.geolocation) {{
+    navigator.geolocation.getCurrentPosition(function(position){{
+        const lat = position.coords.latitude;
+        const lon = position.coords.longitude;
+        map.setCenter([lon, lat]);
+        userMarker = new mapboxgl.Marker({{color:'blue'}})
+            .setLngLat([lon, lat])
             .addTo(map);
-    }} else {{
-        userMarker.setLngLat([lng, lat]);
-    }}
-}});
+    }});
+}}
 
-// Add existing hazard markers
+// Existing hazard markers
 const hazards = {hazard_data_json};
 hazards.forEach(h => {{
     if(h.beach == "{selected_beach}") {{
