@@ -82,7 +82,7 @@ def summarize_tides(tide_df):
 beaches = {
     "Santa Monica Pier": {
         "lat": 34.0100, "lon": -118.4950, "station": "9410840",
-        "image": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&h=400&fit=crop",
+        "image": "https://images.squarespace-cdn.com/content/v1/5e0e65adcd39ed279a0402fd/1627422658456-7QKPXTNQ34W2OMBTESCJ/1.jpg?format=2500w",
         "description": "An iconic landmark offering stunning ocean views, amusement rides, and family-friendly attractions.",
         "fun_facts": [
             "Opened in 1909.",
