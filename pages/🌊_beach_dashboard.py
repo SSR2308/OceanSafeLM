@@ -77,7 +77,7 @@ def summarize_tides(tide_df):
     return summary
 
 # ---------------------------
-# Beach Data
+# Beach Data with Images, Descriptions, Facts, Visitor Info
 # ---------------------------
 beaches = {
     "Santa Monica Pier": {
@@ -262,90 +262,88 @@ st.markdown(
 # ---------------------------
 # Map Section
 # ---------------------------
-# ---------------------------
-# Map Section
-# ---------------------------
 hazard_data_json = json.dumps(st.session_state["hazard_reports"])
 show_directions = st.checkbox("Show Directions", key="directions_toggle")
 
 components.html(f"""
 <head>
-    <link href='https://api.mapbox.com/mapbox-gl-js/v3.15.0/mapbox-gl.css' rel='stylesheet' />
-    <script src='https://api.mapbox.com/mapbox-gl-js/v3.15.0/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.css' rel='stylesheet' />
+    <script src='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.js'></script>
+    <script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.1.0/mapbox-gl-directions.js'></script>
+    <link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.1.0/mapbox-gl-directions.css' />
 </head>
 <body>
-<div id='map' style='width:100%; height:650px;'></div>
-<script>
-    mapboxgl.accessToken = '{MAPBOX_TOKEN}';
+    <div id='map' style='width:100%; height:650px;'></div>
+    <script>
+        mapboxgl.accessToken = '{MAPBOX_TOKEN}';
 
-    const map = new mapboxgl.Map({{
-        container: 'map',
-        style: 'mapbox://styles/mapbox/streets-v12',
-        center: [{beach_coords['lon']}, {beach_coords['lat']}], // fallback center
-        zoom: 14
-    }});
-
-    // Add navigation controls (zoom in/out)
-    const nav = new mapboxgl.NavigationControl();
-    map.addControl(nav, 'top-right');
-
-    // Add GeolocateControl to center map on user
-    const geolocate = new mapboxgl.GeolocateControl({{
-        positionOptions: {{
+        navigator.geolocation.getCurrentPosition(successLocation, errorLocation, {{
             enableHighAccuracy: true
-        }},
-        trackUserLocation: true,
-        showUserHeading: true
-    }});
-    map.addControl(geolocate, 'top-left');
+        }});
 
-    // Blue marker for user location
-    let userMarker = null;
-    geolocate.on('geolocate', (event) => {{
-        const userCoords = [event.coords.longitude, event.coords.latitude];
-        if(!userMarker) {{
-            userMarker = new mapboxgl.Marker({{color: 'blue'}})
-                .setLngLat(userCoords)
-                .addTo(map);
-        }} else {{
-            userMarker.setLngLat(userCoords);
+        function successLocation(position) {{
+            setupMap([position.coords.longitude, position.coords.latitude])
         }}
-        map.flyTo({{center: userCoords, zoom: 14}});
-    }});
 
-    // Render hazard markers
-    const hazards = {hazard_data_json};
-    hazards.forEach(h => {{
-        if(h.beach == "{selected_beach}") {{
-            new mapboxgl.Marker({{color:'orange'}})
-                .setLngLat([h.lon, h.lat])
-                .setPopup(new mapboxgl.Popup().setText(h.hazard))
-                .addTo(map);
+        function errorLocation() {{
+            setupMap([{beach_coords['lon']}, {beach_coords['lat']}])
         }}
-    }});
 
-    // Add new hazard marker on map click
-    map.on('click', function(e) {{
-        const lat = e.lngLat.lat;
-        const lon = e.lngLat.lng;
-        const hazard = prompt("Enter hazard type (e.g., Jellyfish, Trash, High surf):");
-        if(hazard) {{
-            fetch("", {{
-                method: "POST",
-                headers: {{ "Content-Type": "application/json" }},
-                body: JSON.stringify({{lat: lat, lon: lon, hazard: hazard, beach: "{selected_beach}"}})
+        function setupMap(center) {{
+            const map = new mapboxgl.Map({{
+                container: 'map',
+                style: 'mapbox://styles/mapbox/streets-v11',
+                center: center,
+                zoom: 14
             }});
-            new mapboxgl.Marker({{color:'orange'}})
-                .setLngLat([lon, lat])
-                .setPopup(new mapboxgl.Popup().setText(hazard))
-                .addTo(map);
-        }}
-    }});
 
-    // Optional: Show directions to the beach if toggled
-    {"window.directions = new MapboxDirections({accessToken: mapboxgl.accessToken, unit:'imperial', profile:'mapbox/walking'}); map.addControl(window.directions, 'top-left'); window.directions.setDestination([" + str(beach_coords['lon']) + "," + str(beach_coords['lat']) + "]);" if show_directions else ""}
-</script>
+            const nav = new mapboxgl.NavigationControl();
+            map.addControl(nav);
+
+            const userMarker = new mapboxgl.Marker({{color:'blue'}})
+                .setLngLat(center)
+                .addTo(map);
+
+            navigator.geolocation.watchPosition(function(pos){{
+                const lon = pos.coords.longitude;
+                const lat = pos.coords.latitude;
+                userMarker.setLngLat([lon, lat]);
+                if(window.directions) {{
+                    window.directions.setOrigin([lon, lat]);
+                }}
+            }}, function(err){{ console.error(err); }}, {{ enableHighAccuracy:true }});
+
+            const hazards = {hazard_data_json};
+            hazards.forEach(h => {{
+                if(h.beach == "{selected_beach}") {{
+                    new mapboxgl.Marker({{color:'orange'}})
+                        .setLngLat([h.lon, h.lat])
+                        .setPopup(new mapboxgl.Popup().setText(h.hazard))
+                        .addTo(map);
+                }}
+            }});
+
+            map.on('click', function(e) {{
+                const lat = e.lngLat.lat;
+                const lon = e.lngLat.lng;
+                const hazard = prompt("Enter hazard type (e.g., Jellyfish, Trash, High surf):");
+                if(hazard) {{
+                    fetch("", {{
+                        method: "POST",
+                        headers: {{ "Content-Type": "application/json" }},
+                        body: JSON.stringify({{lat:lat, lon:lon, hazard: hazard, beach: "{selected_beach}"}})
+                    }});
+                    new mapboxgl.Marker({{color:'orange'}})
+                        .setLngLat([lon, lat])
+                        .setPopup(new mapboxgl.Popup().setText(hazard))
+                        .addTo(map);
+                }}
+            }});
+
+            {"window.directions = new MapboxDirections({accessToken: mapboxgl.accessToken, unit:'imperial', profile:'mapbox/walking'}); map.addControl(window.directions, 'top-left'); window.directions.setDestination([" + str(beach_coords['lon']) + "," + str(beach_coords['lat']) + "]);" if show_directions else ""}
+        }}
+    </script>
 </body>
 """, height=650)
 
-st.write("🟢 Your location is now centered live (blue marker). Click the map to report hazards. Directions toggle works if enabled.")
+st.write("🟢 Your location updates live (blue marker). Click the map to report hazards. If 'Show Directions' is toggled on, navigation automatically starts.")
