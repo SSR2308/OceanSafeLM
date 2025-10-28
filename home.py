@@ -7,26 +7,58 @@ import time
 st.set_page_config(
     page_title="Ocean Safe",
     page_icon="🏖️",
-    layout="wide"
+    layout="wide",
 )
 
 # ---------------------------
-# Loader Animation (MP4)
+# Full-screen Loading Animation
 # ---------------------------
 loader_placeholder = st.empty()
 
-# Play MP4 loader animation
-loader_placeholder.video("bc8c-f169-4534-a82d-acc2fad66609.mp4")  # <-- replace with your file path
+# Embed MP4 as fullscreen autoplay video using HTML
+loader_html = f"""
+<style>
+body, html {{
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: white;
+    height: 100%;
+    width: 100%;
+}}
+.loader-container {{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100vw;
+}}
+.loader-video {{
+    max-width: 80%;
+    max-height: 80%;
+}}
+</style>
+<div class="loader-container">
+    <video class="loader-video" autoplay muted playsinline>
+        <source src="bc8c-f169-4534-a82d-acc2fad66609.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+</div>
+"""
 
-# Simulate loading time (replace with actual data fetching if needed)
+loader_placeholder.markdown(loader_html, unsafe_allow_html=True)
+
+# Simulate loading (replace with actual data fetching if needed)
 time.sleep(3)
 
 # Remove loader
 loader_placeholder.empty()
 
 # ---------------------------
-# Hero Section
+# Main Page Content
 # ---------------------------
+
+# Hero Section
 st.markdown("""
 <div style='position: relative; text-align: center; color: white; margin-bottom: 30px;'>
     <h1 style='font-size: 3em; margin-bottom: 0;'>Beach Safety Chatbot 🏖️</h1>
@@ -40,9 +72,7 @@ st.image(
     caption="Stay Safe at the Beach"
 )
 
-# ---------------------------
 # About Section using Tabs
-# ---------------------------
 st.markdown("<br>", unsafe_allow_html=True)
 tabs = st.tabs(["🌟 Overview", "🚨 Features", "💡 Tidebot Helps You"])
 
@@ -71,9 +101,7 @@ with tabs[2]:
     - 🆘 Emergency advice for beach incidents
     """)
 
-# ---------------------------
 # Footer
-# ---------------------------
 st.markdown("<br><br>", unsafe_allow_html=True)
 st.markdown("---")
 st.markdown(
