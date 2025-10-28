@@ -258,7 +258,7 @@ components.html(f"""
 <script>
 mapboxgl.accessToken = '{MAPBOX_TOKEN}';
 
-// Initialize map centered at beach coordinates
+// Initialize map centered at beach
 const map = new mapboxgl.Map({{
     container: 'map',
     style: 'mapbox://styles/mapbox/streets-v11',
@@ -266,10 +266,10 @@ const map = new mapboxgl.Map({{
     zoom: 14
 }});
 
-// Add navigation control
+// Add navigation controls
 map.addControl(new mapboxgl.NavigationControl());
 
-// Add geolocate control (user's live location)
+// Add geolocate control
 const geolocate = new mapboxgl.GeolocateControl({{
     positionOptions: {{ enableHighAccuracy: true }},
     trackUserLocation: true,
@@ -277,9 +277,20 @@ const geolocate = new mapboxgl.GeolocateControl({{
 }});
 map.addControl(geolocate);
 
-// Trigger geolocation once map loads
-map.on('load', function() {{
-    geolocate.trigger();
+// Custom blue marker for user location
+let userMarker = null;
+
+geolocate.on('geolocate', function(event) {{
+    const lng = event.coords.longitude;
+    const lat = event.coords.latitude;
+
+    if(!userMarker) {{
+        userMarker = new mapboxgl.Marker({{ color: 'blue' }})
+            .setLngLat([lng, lat])
+            .addTo(map);
+    }} else {{
+        userMarker.setLngLat([lng, lat]);
+    }}
 }});
 
 // Add existing hazard markers
