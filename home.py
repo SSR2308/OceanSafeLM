@@ -16,30 +16,38 @@ st.set_page_config(
 # ---------------------------
 splash_container = st.empty()
 
-# Use your GitHub raw link for MP4
+# GitHub raw link for MP4
 video_url = "https://github.com/SSR2308/OceanSafeLM/blob/9761d751ca32b424d92cc29eba0c179d212e7127/bc8c-f169-4534-a82d-acc2fad66609.mp4?raw=true"
 
-# Center video and make background white
 splash_container.markdown(f"""
-<div style="
+<div id="splash" style="
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
     background-color: white;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 9999;
+    transition: opacity 1s ease;
 ">
     <video autoplay muted playsinline style="max-width: 80%; max-height: 80%;">
         <source src="{video_url}" type="video/mp4">
         Your browser does not support the video tag.
     </video>
 </div>
+
+<script>
+    // Fade out splash after video duration (replace 5 with your video seconds)
+    setTimeout(() => {{
+        const splash = document.getElementById('splash');
+        splash.style.opacity = '0';
+        setTimeout(() => splash.remove(), 1000);
+    }}, 5000);
+</script>
 """, unsafe_allow_html=True)
-
-# Wait for video duration (replace 5 with actual seconds of your video)
-time.sleep(5)
-
-# Clear splash container
-splash_container.empty()
 
 # ---------------------------
 # Main Homepage Content
@@ -48,13 +56,25 @@ splash_container.empty()
 with open("styles.css") as f:
     st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
 
+# Make all text white
+st.markdown("""
+<style>
+body, .stApp, h1, h2, h3, p, .stMarkdown {
+    color: white !important;
+}
+.stApp {
+    background-color: #000000;  /* Optional: black background */
+}
+</style>
+""", unsafe_allow_html=True)
+
 # Show sidebar now (optional)
 st.sidebar.header("Navigation")
 st.sidebar.info("Select a page to explore!")
 
 # Hero section
 st.markdown("""
-<div style='position: relative; text-align: center; color: #023e8a;'>
+<div style='position: relative; text-align: center; color: white;'>
     <h1 style='font-size: 3em; margin-bottom: 0;'>Beach Safety Chatbot 🏖️</h1>
     <p style='font-size: 1.2em; margin-top: 0;'>Your intelligent companion for safe beach adventures!</p>
 </div>
@@ -98,6 +118,6 @@ with tabs[2]:
 st.markdown("<br><br>", unsafe_allow_html=True)
 st.markdown("---")
 st.markdown(
-    "<p style='text-align: center; color: gray;'>Stay safe, stay informed, enjoy the beach! 🌴</p>",
+    "<p style='text-align: center; color: white;'>Stay safe, stay informed, enjoy the beach! 🌴</p>",
     unsafe_allow_html=True
 )
