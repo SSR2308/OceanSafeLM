@@ -12,18 +12,23 @@ st.set_page_config(
 )
 
 # ---------------------------
-# Fullscreen Splash Animation
+# Fullscreen Splash Animation (Overlay Everything)
 # ---------------------------
 video_url = "https://github.com/SSR2308/OceanSafeLM/blob/9761d751ca32b424d92cc29eba0c179d212e7127/bc8c-f169-4534-a82d-acc2fad66609.mp4?raw=true"
 
 splash_container = st.empty()
 splash_container.markdown(f"""
-<div style="
+<div id="splash" style="
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: white;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
-    background-color: white;
+    z-index: 9999;
     animation: fadeout 1s ease 4s forwards;
 ">
     <video autoplay muted playsinline style="max-width: 80%; max-height: 80%;">
@@ -42,7 +47,7 @@ splash_container.markdown(f"""
 </style>
 """, unsafe_allow_html=True)
 
-time.sleep(5)  # wait for splash duration
+time.sleep(5)  # duration of splash
 splash_container.empty()
 
 # ---------------------------
