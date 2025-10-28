@@ -237,6 +237,7 @@ if not tide_df.empty:
         st.plotly_chart(fig, use_container_width=True)
 else:
     st.info("No tide data available for this beach.")
+
 # ---------------------------
 # Hazard Reporting Map
 # ---------------------------
@@ -277,9 +278,13 @@ const geolocate = new mapboxgl.GeolocateControl({{
 }});
 map.addControl(geolocate);
 
+// Trigger geolocation on map load
+map.on('load', function() {{
+    geolocate.trigger();
+}});
+
 // Custom blue marker for user location
 let userMarker = null;
-
 geolocate.on('geolocate', function(event) {{
     const lng = event.coords.longitude;
     const lat = event.coords.latitude;
