@@ -1,80 +1,37 @@
 import streamlit as st
-import time
 
-# ---------------------------
-# Page Config
-# ---------------------------
 st.set_page_config(
     page_title="Ocean Safe",
     page_icon="🏖️",
-    layout="wide",
-    initial_sidebar_state="collapsed"
+    layout="wide"
 )
 
-# ---------------------------
-# Fullscreen Splash Animation
-# ---------------------------
-splash_container = st.empty()
+# Inject custom CSS for wave and card styling, remove Streamlit blue elements
+with open("styles.css") as f:
+    st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
 
-video_url = "https://github.com/SSR2308/OceanSafeLM/blob/9761d751ca32b424d92cc29eba0c179d212e7127/bc8c-f169-4534-a82d-acc2fad66609.mp4?raw=true"
-
-# Make video fullscreen, remove scrollbars and default blue styling
-splash_container.markdown(f"""
-<style>
-body {{
-    margin: 0;
-    overflow: hidden; /* remove scroll */
-    background-color: white; /* white background */
-}}
-.stApp {{
-    background-color: white;
-}}
-</style>
-
-<div style="
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: white;
-    z-index: 9999;
-">
-    <video autoplay muted playsinline style="width:100vw; height:100vh; object-fit:cover;">
-        <source src="{video_url}" type="video/mp4">
-        Your browser does not support the video tag.
-    </video>
-</div>
-""", unsafe_allow_html=True)
-
-# Wait for video duration (adjust seconds to match your video)
-time.sleep(5)
-
-# Remove splash
-splash_container.empty()
-
-# ---------------------------
-# Main Homepage Content
-# ---------------------------
-# Inject custom CSS for cards, styling, remove default Streamlit colors
 st.markdown("""
 <style>
-body { background-color: white; }
-.stApp { background-color: white; }
-h1, h2, h3, p { color: #023e8a; } /* change headings to dark blue */
+/* Remove Streamlit blue default */
+.stApp, body {
+    background-color: white;
+}
+
+h1, h2, h3, p {
+    color: #023e8a; /* optional: dark blue text */
+}
+
+.stButton>button {
+    background-color: #0077b6 !important;
+    color: white !important;
+    border: none !important;
+}
 </style>
 """, unsafe_allow_html=True)
-
-# Optional sidebar
-st.sidebar.header("Navigation")
-st.sidebar.info("Select a page to explore!")
 
 # Hero section
 st.markdown("""
-<div style='text-align: center;'>
+<div style='position: relative; text-align: center; color: #023e8a;'>
     <h1 style='font-size: 3em; margin-bottom: 0;'>Beach Safety Chatbot 🏖️</h1>
     <p style='font-size: 1.2em; margin-top: 0;'>Your intelligent companion for safe beach adventures!</p>
 </div>
@@ -86,7 +43,11 @@ st.image(
     caption="Stay Safe at the Beach"
 )
 
+# Wave animation div
+st.markdown('<div class="wave"></div>', unsafe_allow_html=True)
+
 # About section using tabs
+st.markdown("<br>", unsafe_allow_html=True)
 tabs = st.tabs(["🌟 Overview", "🚨 Features", "💡 Tidebot Helps You"])
 
 with tabs[0]:
