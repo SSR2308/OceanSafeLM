@@ -1,4 +1,5 @@
 import streamlit as st
+import time
 
 # ---------------------------
 # Page Config
@@ -15,109 +16,57 @@ st.set_page_config(
 # ---------------------------
 video_url = "https://github.com/SSR2308/OceanSafeLM/blob/9761d751ca32b424d92cc29eba0c179d212e7127/bc8c-f169-4534-a82d-acc2fad66609.mp4?raw=true"
 
-st.markdown(f"""
-<style>
-/* Initially hide sidebar */
-[data-testid="stSidebar"] {{
-    display: none !important;
-}}
-
-/* Splash fullscreen container */
-#splash {{
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background-color: white;
+splash_container = st.empty()
+splash_container.markdown(f"""
+<div style="
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 9999;
-    animation: fadeout 1s ease 4s forwards; /* fade after 4s */
-}}
+    height: 100vh;
+    background-color: white;
+    animation: fadeout 1s ease 4s forwards;
+">
+    <video autoplay muted playsinline style="max-width: 80%; max-height: 80%;">
+        <source src="{video_url}" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+</div>
 
-/* Video inside splash */
-#splash video {{
-    max-width: 80%;
-    max-height: 80%;
-}}
-
-/* Fade-out animation */
+<style>
 @keyframes fadeout {{
     to {{
         opacity: 0;
         visibility: hidden;
     }}
 }}
-
-/* Hamburger toggle button */
-#toggleSidebar {{
-    position: fixed;
-    top: 20px;
-    left: 20px;
-    z-index: 10000;
-    width: 35px;
-    height: 30px;
-    cursor: pointer;
-}}
-
-#toggleSidebar div {{
-    width: 100%;
-    height: 5px;
-    background-color: #023e8a;
-    margin: 6px 0;
-    transition: 0.4s;
-}}
 </style>
-
-<!-- Splash container -->
-<div id="splash">
-    <video autoplay muted playsinline>
-        <source src="{video_url}" type="video/mp4">
-        Your browser does not support the video tag.
-    </video>
-</div>
-
-<!-- Hamburger button -->
-<div id="toggleSidebar" onclick="toggleSidebar()">
-  <div></div>
-  <div></div>
-  <div></div>
-</div>
-
-<script>
-// Remove splash after video duration and fade
-setTimeout(function(){{
-    var splash = document.getElementById("splash");
-    if(splash) splash.remove();
-}}, 5000);
-
-// Function to toggle sidebar
-function toggleSidebar() {{
-    const sidebar = document.querySelector('[data-testid="stSidebar"]');
-    if(sidebar) {{
-        if(sidebar.style.display === 'block') {{
-            sidebar.style.display = 'none';
-        }} else {{
-            sidebar.style.display = 'block';
-        }}
-    }}
-}}
-</script>
 """, unsafe_allow_html=True)
 
-# ---------------------------
-# Main Homepage Content
-# ---------------------------
-with open("styles.css") as f:
-    st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
+time.sleep(5)  # wait for splash duration
+splash_container.empty()
 
-# Hero section
+# ---------------------------
+# Sidebar Toggle Button
+# ---------------------------
+toggle = st.button("☰ Menu")  # hamburger button
+if toggle:
+    st.session_state.sidebar_state = st.session_state.get("sidebar_state", "collapsed")
+    # Use Streamlit command to expand
+    st.experimental_set_query_params(show_sidebar="true")
+
+# ---------------------------
+# Sidebar Content
+# ---------------------------
+st.sidebar.header("Navigation")
+st.sidebar.info("Select a page to explore!")
+
+# ---------------------------
+# Main Content
+# ---------------------------
 st.markdown("""
-<div style='position: relative; text-align: center; color: white;'>
-    <h1 style='font-size: 3em; margin-bottom: 0;'>Beach Safety Chatbot 🏖️</h1>
-    <p style='font-size: 1.2em; margin-top: 0;'>Your intelligent companion for safe beach adventures!</p>
+<div style='text-align: center; color: white;'>
+    <h1 style='font-size: 3em;'>Beach Safety Chatbot 🏖️</h1>
+    <p style='font-size: 1.2em;'>Your intelligent companion for safe beach adventures!</p>
 </div>
 """, unsafe_allow_html=True)
 
@@ -127,7 +76,6 @@ st.image(
     caption="Stay Safe at the Beach"
 )
 
-# About section using tabs
 tabs = st.tabs(["🌟 Overview", "🚨 Features", "💡 Tidebot Helps You"])
 with tabs[0]:
     st.markdown("""
@@ -152,7 +100,6 @@ with tabs[2]:
     - 🆘 Emergency advice for beach incidents
     """)
 
-# Footer
 st.markdown("<br><br>", unsafe_allow_html=True)
 st.markdown("---")
 st.markdown(
