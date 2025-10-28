@@ -12,14 +12,14 @@ st.set_page_config(
 )
 
 # ---------------------------
-# Adjustable numeric variables
+# Adjustable numeric variables (in pixels)
 # ---------------------------
-VIDEO_WIDTH = 0.9          # 0.0 - 1.0 (percentage of screen width)
-VIDEO_MAX_HEIGHT = 0.75    # 0.0 - 1.0 (percentage of screen height)
-VIDEO_Y_OFFSET = 0.2       # -1.0 (up) to 1.0 (down), relative to center
-TEXT_BOTTOM = 40           # px from bottom
-TEXT_RIGHT = 30            # px from right
-TEXT_SIZE = 7              # em
+VIDEO_WIDTH_PX = 1200        # width of the video in px
+VIDEO_HEIGHT_PX = 675        # height of the video in px
+VIDEO_TOP_PX = 150           # distance from top of screen
+TEXT_BOTTOM_PX = 40          # distance from bottom
+TEXT_RIGHT_PX = 30           # distance from right
+TEXT_SIZE_EM = 7             # font size
 
 # ---------------------------
 # Fullscreen Splash Animation with Text
@@ -39,15 +39,14 @@ splash_container.markdown(f"""
     animation: fadeout 1s ease 4s forwards;
 ">
 
-    <!-- Centered Video -->
+    <!-- Positioned Video -->
     <video autoplay muted playsinline style="
         position: absolute;
-        top: calc(50% + {VIDEO_Y_OFFSET * 100}%);
+        top: {VIDEO_TOP_PX}px;
         left: 50%;
-        transform: translate(-50%, -50%);
-        width: {VIDEO_WIDTH * 100}%;
-        height: auto;
-        max-height: {VIDEO_MAX_HEIGHT * 100}%;
+        transform: translateX(-50%);
+        width: {VIDEO_WIDTH_PX}px;
+        height: {VIDEO_HEIGHT_PX}px;
     ">
         <source src="{video_url}" type="video/mp4">
         Your browser does not support the video tag.
@@ -56,10 +55,10 @@ splash_container.markdown(f"""
     <!-- Bottom-right Text -->
     <h1 style='
         position: absolute;
-        bottom: {TEXT_BOTTOM}px;
-        right: {TEXT_RIGHT}px;
+        bottom: {TEXT_BOTTOM_PX}px;
+        right: {TEXT_RIGHT_PX}px;
         font-family: "Brush Script MT", cursive;
-        font-size: {TEXT_SIZE}em;
+        font-size: {TEXT_SIZE_EM}em;
         color: #0077be;
         text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
     '>
