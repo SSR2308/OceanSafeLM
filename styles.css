@@ -1,51 +1,131 @@
-/* styles.css */
-body {
-    background: linear-gradient(to top, #00c6ff, #0072ff);
-    margin: 0;
-    padding: 0;
-    overflow-x: hidden;
-    font-family: 'Arial', sans-serif;
-}
-
+/* ---------------------------
+   Wave Animations
+--------------------------- */
 .wave {
-    position: absolute;
-    bottom: 0;
     width: 100%;
-    height: 100px;
-    background: url('https://www.pngmart.com/files/2/Wave-PNG-Transparent-Image.png') repeat-x;
-    animation: wave-animation 10s linear infinite;
-    z-index: -1;
+    height: 80px;
+    background: url('https://i.ibb.co/7n1VzTG/wave.png') repeat-x;
+    background-size: cover;
+    animation: waveMove 10s linear infinite;
+    margin-bottom: 30px;
+    position: relative;
+    z-index: 1;
 }
 
-@keyframes wave-animation {
-    0% {
-        transform: translateX(0);
-    }
-    100% {
-        transform: translateX(-100%);
-    }
+.wave.wave2 {
+    background: url('https://i.ibb.co/7n1VzTG/wave.png') repeat-x;
+    background-size: cover;
+    animation: waveMove 15s linear infinite;
+    opacity: 0.5;
+    margin-bottom: 30px;
+    position: relative;
+    z-index: 2;
 }
 
-.info-card {
-    background: rgba(255, 255, 255, 0.1);
-    padding: 20px;
+@keyframes waveMove {
+    0% { background-position-x: 0; }
+    100% { background-position-x: 1000px; }
+}
+
+/* ---------------------------
+   Hero Section
+--------------------------- */
+.hero-image {
     border-radius: 15px;
-    backdrop-filter: blur(10px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.3);
     margin-bottom: 20px;
 }
 
-.cta-button {
-    display: inline-block;
-    padding: 15px 30px;
-    background-color: #ff7f50;
-    color: white;
-    font-size: 1.2em;
-    border-radius: 10px;
-    text-decoration: none;
-    transition: 0.3s;
+/* ---------------------------
+   Card Styles
+--------------------------- */
+.card {
+    background-color: #ffffffcc; /* semi-transparent white */
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    transition: transform 0.3s, box-shadow 0.3s;
+    margin-bottom: 25px;
 }
 
-.cta-button:hover {
-    background-color: #ff6347;
-    transform: scale(1.05);
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+}
+
+.card h3 {
+    margin-top: 0;
+    color: #0077b6;
+}
+
+.card p {
+    margin-bottom: 0;
+    color: #023e8a;
+}
+
+/* ---------------------------
+   Info Section Layout
+--------------------------- */
+.info-section {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: space-between;
+    margin-bottom: 30px;
+}
+
+.info-card {
+    flex: 1 1 300px;
+}
+
+/* ---------------------------
+   Buttons
+--------------------------- */
+.button {
+    background-color: #0077b6;
+    color: #fff !important;
+    border: none;
+    padding: 10px 25px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.button:hover {
+    background-color: #023e8a;
+}
+
+/* ---------------------------
+   Footer
+--------------------------- */
+.footer {
+    text-align: center;
+    color: gray;
+    margin-top: 50px;
+    font-size: 0.9rem;
+}
+
+/* ---------------------------
+   Streamlit-specific tweaks
+--------------------------- */
+.stButton>button {
+    background-color: #0077b6;
+    color: white;
+    border-radius: 10px;
+    padding: 10px 20px;
+    font-weight: bold;
+}
+
+.stButton>button:hover {
+    background-color: #023e8a;
+}
+
+.stMarkdown h2, .stMarkdown h3 {
+    color: #0077b6;
+}
+
+.stMarkdown p {
+    color: #03045e;
 }
