@@ -260,15 +260,15 @@ st.markdown(
 )
 
 # ---------------------------
-# Map Section (with GeolocateControl)
+# Map Section
 # ---------------------------
 hazard_data_json = json.dumps(st.session_state["hazard_reports"])
 show_directions = st.checkbox("Show Directions", key="directions_toggle")
 
 components.html(f"""
 <head>
-    <link href='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.css' rel='stylesheet' />
-    <script src='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v3.15.0/mapbox-gl.css' rel='stylesheet' />
+    <script src='https://api.mapbox.com/mapbox-gl-js/v3.15.0/mapbox-gl.js'></script>
     <script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.1.0/mapbox-gl-directions.js'></script>
     <link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.1.0/mapbox-gl-directions.css' />
 </head>
@@ -283,22 +283,26 @@ components.html(f"""
             zoom: 14
         }});
 
-        // Add navigation control
-        map.addControl(new mapboxgl.NavigationControl());
+        // Navigation controls
+        const nav = new mapboxgl.NavigationControl();
+        map.addControl(nav);
 
-        // Add GeolocateControl (live location button)
-        map.addControl(
-            new mapboxgl.GeolocateControl({{
-                positionOptions: {{
-                    enableHighAccuracy: true
-                }},
-                trackUserLocation: true,
-                showUserHeading: true
-            }}),
-            'top-left'
-        );
+        // Geolocate Control
+        const geolocate = new mapboxgl.GeolocateControl({{
+            positionOptions: {{
+                enableHighAccuracy: true
+            }},
+            trackUserLocation: true,
+            showUserHeading: true
+        }});
+        map.addControl(geolocate);
 
-        // Load hazard markers
+        // Automatically trigger geolocation on load
+        map.on('load', function() {{
+            geolocate.trigger();
+        }});
+
+        // Display existing hazard markers
         const hazards = {hazard_data_json};
         hazards.forEach(h => {{
             if(h.beach == "{selected_beach}") {{
@@ -309,7 +313,7 @@ components.html(f"""
             }}
         }});
 
-        // Click-to-report hazards
+        // Add hazard reporting on click
         map.on('click', function(e) {{
             const lat = e.lngLat.lat;
             const lon = e.lngLat.lng;
@@ -327,7 +331,7 @@ components.html(f"""
             }}
         }});
 
-        // Optional directions
+        // Optional directions control
         {"window.directions = new MapboxDirections({accessToken: mapboxgl.accessToken, unit:'imperial', profile:'mapbox/walking'}); map.addControl(window.directions, 'top-left'); window.directions.setDestination([" + str(beach_coords['lon']) + "," + str(beach_coords['lat']) + "]);" if show_directions else ""}
     </script>
 </body>
