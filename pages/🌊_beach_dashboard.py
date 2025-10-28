@@ -205,16 +205,6 @@ components.html(f"""
 <script>
 mapboxgl.accessToken = '{MAPBOX_TOKEN}';
 
-navigator.geolocation.getCurrentPosition(successLocation, errorLocation, {{enableHighAccuracy:true}});
-
-function successLocation(position){{
-    setupMap([position.coords.longitude, position.coords.latitude]);
-}}
-
-function errorLocation(){{
-    setupMap([{beach_coords['lon']}, {beach_coords['lat']}]);
-}}
-
 function setupMap(center){{
     const map = new mapboxgl.Map({{
         container: 'map',
@@ -229,12 +219,16 @@ function setupMap(center){{
         .setLngLat(center)
         .addTo(map);
 
+    // Update user location live
     navigator.geolocation.watchPosition(function(pos){{
         const lon = pos.coords.longitude;
         const lat = pos.coords.latitude;
         userMarker.setLngLat([lon, lat]);
-    }});
-
+        map.setCenter([lon, lat]);
+    }}, function(){{
+        console.warn("Geolocation failed, using beach coordinates.");
+    }}, {{ enableHighAccuracy:true }});
+    
     const hazards = {hazard_data_json};
     hazards.forEach(h => {{
         if(h.beach == "{selected_beach}") {{
@@ -246,7 +240,7 @@ function setupMap(center){{
     }});
 
     {"window.directions = new MapboxDirections({accessToken: mapboxgl.accessToken, unit:'imperial', profile:'mapbox/walking'}); map.addControl(window.directions, 'top-left'); window.directions.setDestination([" + str(beach_coords['lon']) + "," + str(beach_coords['lat']) + "]);" if show_directions else ""}
-
+    
     map.on('click', function(e){{
         const lat = e.lngLat.lat;
         const lon = e.lngLat.lng;
@@ -264,6 +258,9 @@ function setupMap(center){{
         }}
     }});
 }}
+
+// Initialize map with beach coordinates; real location will override
+setupMap([{beach_coords['lon']}, {beach_coords['lat']}]);
 </script>
 </body>
 """, height=650)
