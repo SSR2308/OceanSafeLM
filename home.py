@@ -12,16 +12,6 @@ st.set_page_config(
 )
 
 # ---------------------------
-# Adjustable numeric variables (in pixels)
-# ---------------------------
-VIDEO_WIDTH_PX = 1200        # width of the video in px
-VIDEO_HEIGHT_PX = 675        # height of the video in px
-VIDEO_TOP_PX = 150           # distance from top of screen
-TEXT_BOTTOM_PX = 40          # distance from bottom
-TEXT_RIGHT_PX = 30           # distance from right
-TEXT_SIZE_EM = 7             # font size
-
-# ---------------------------
 # Fullscreen Splash Animation with Text
 # ---------------------------
 video_url = "https://github.com/SSR2308/OceanSafeLM/blob/9761d751ca32b424d92cc29eba0c179d212e7127/bc8c-f169-4534-a82d-acc2fad66609.mp4?raw=true"
@@ -35,36 +25,32 @@ splash_container.markdown(f"""
     width: 100%;
     height: 100%;
     background-color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;  /* push video lower */
+    align-items: center;
     z-index: 9999;
     animation: fadeout 1s ease 4s forwards;
+    padding-bottom: 150px;       /* adjust space for text */
 ">
-
-    <!-- Positioned Video -->
     <video autoplay muted playsinline style="
-        position: absolute;
-        top: {VIDEO_TOP_PX}px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: {VIDEO_WIDTH_PX}px;
-        height: {VIDEO_HEIGHT_PX}px;
+        width: 95%;
+        height: auto;
+        max-height: 75%;   /* make it larger */
+        margin-bottom: 50px; /* space above text */
     ">
         <source src="{video_url}" type="video/mp4">
         Your browser does not support the video tag.
     </video>
-
-    <!-- Bottom-right Text -->
     <h1 style='
-        position: absolute;
-        bottom: {TEXT_BOTTOM_PX}px;
-        right: {TEXT_RIGHT_PX}px;
         font-family: "Brush Script MT", cursive;
-        font-size: {TEXT_SIZE_EM}em;
+        font-size: 7em;
         color: #0077be;
         text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+        transform: translateX(30px);
     '>
         Ocean Safe
     </h1>
-
 </div>
 
 <style>
@@ -77,7 +63,7 @@ splash_container.markdown(f"""
 </style>
 """, unsafe_allow_html=True)
 
-time.sleep(5)
+time.sleep(5)  # wait for splash duration
 splash_container.empty()
 
 # ---------------------------
