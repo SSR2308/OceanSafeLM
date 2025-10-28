@@ -12,7 +12,7 @@ st.set_page_config(
 )
 
 # ---------------------------
-# Fullscreen Splash Animation (Overlay Everything)
+# Fullscreen Splash Animation with Fancy Text
 # ---------------------------
 video_url = "https://github.com/SSR2308/OceanSafeLM/blob/9761d751ca32b424d92cc29eba0c179d212e7127/bc8c-f169-4534-a82d-acc2fad66609.mp4?raw=true"
 
@@ -30,8 +30,12 @@ splash_container.markdown(f"""
     align-items: center;
     z-index: 9999;
     animation: fadeout 1s ease 4s forwards;
+    flex-direction: column;
 ">
-    <video autoplay muted playsinline style="max-width: 80%; max-height: 80%;">
+    <h1 style='font-family: "Brush Script MT", cursive; font-size: 5em; color: #0077be; text-shadow: 2px 2px 8px rgba(0,0,0,0.5); margin-bottom: 20px;'>
+        Ocean Safe
+    </h1>
+    <video autoplay muted playsinline style="max-width: 80%; max-height: 60%;">
         <source src="{video_url}" type="video/mp4">
         Your browser does not support the video tag.
     </video>
@@ -47,7 +51,7 @@ splash_container.markdown(f"""
 </style>
 """, unsafe_allow_html=True)
 
-time.sleep(5)  # duration of splash
+time.sleep(5)  # wait for splash duration
 splash_container.empty()
 
 # ---------------------------
