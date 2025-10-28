@@ -12,7 +12,7 @@ st.set_page_config(
 )
 
 # ---------------------------
-# Fullscreen Splash Animation with Fancy Text
+# Fullscreen Splash Animation with Bottom-Centered Text
 # ---------------------------
 video_url = "https://github.com/SSR2308/OceanSafeLM/blob/9761d751ca32b424d92cc29eba0c179d212e7127/bc8c-f169-4534-a82d-acc2fad66609.mp4?raw=true"
 
@@ -26,19 +26,20 @@ splash_container.markdown(f"""
     height: 100%;
     background-color: white;
     display: flex;
-    justify-content: center;
-    align-items: center;
+    flex-direction: column;
+    justify-content: flex-end;  /* push content to bottom */
+    align-items: center;        /* center horizontally */
     z-index: 9999;
     animation: fadeout 1s ease 4s forwards;
-    flex-direction: column;
+    padding-bottom: 50px;       /* space from bottom */
 ">
-    <h1 style='font-family: "Brush Script MT", cursive; font-size: 5em; color: #0077be; text-shadow: 2px 2px 8px rgba(0,0,0,0.5); margin-bottom: 20px;'>
-        Ocean Safe
-    </h1>
-    <video autoplay muted playsinline style="max-width: 80%; max-height: 60%;">
+    <video autoplay muted playsinline style="max-width: 80%; max-height: 50%; margin-bottom: 30px;">
         <source src="{video_url}" type="video/mp4">
         Your browser does not support the video tag.
     </video>
+    <h1 style='font-family: "Brush Script MT", cursive; font-size: 7em; color: #0077be; text-shadow: 2px 2px 8px rgba(0,0,0,0.5);'>
+        Ocean Safe
+    </h1>
 </div>
 
 <style>
