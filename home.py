@@ -32,19 +32,25 @@ splash_container.markdown(f"""
     animation: fadeout 1s ease 4s forwards;
 ">
     <div style="position: relative; text-align: center;">
-        <video autoplay muted playsinline style="max-width: 80%; max-height: 50%;">
+        <video autoplay muted playsinline style="
+            width: auto;
+            height: 50vh;  /* video height is 50% of viewport */
+            max-width: 90%;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        ">
             <source src="{video_url}" type="video/mp4">
             Your browser does not support the video tag.
         </video>
         <h1 style='
             font-family: "Brush Script MT", cursive;
-            font-size: 7em;
+            font-size: 4em;
             color: #0077be;
             text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
             position: absolute;
-            bottom: 50px;
+            bottom: 40px;
             left: 50%;
-            transform: translateX(30px);
+            transform: translateX(20px);
         '>
             Ocean Safe
         </h1>
