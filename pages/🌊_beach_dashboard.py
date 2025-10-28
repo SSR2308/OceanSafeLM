@@ -4,6 +4,15 @@ import requests
 import json
 import plotly.express as px
 import streamlit.components.v1 as components
+import streamlit as st
+
+# Inject custom CSS
+with open("styles.css") as f:
+    st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
+
+# Add the wave div
+st.markdown('<div class="wave"></div>', unsafe_allow_html=True)
+
 
 # ---------------------------
 # API Keys from Secrets
