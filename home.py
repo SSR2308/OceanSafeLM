@@ -1,5 +1,4 @@
 import streamlit as st
-import time
 
 st.set_page_config(
     page_title="Ocean Safe",
@@ -22,13 +21,19 @@ splash_html = """
     align-items: center;
     z-index: 9999;
 }
+#splash video {
+    max-width: 80%;
+    max-height: 80%;
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+}
 body {
     overflow: hidden; /* Disable scroll while splash */
 }
 </style>
 
 <div id="splash">
-    <video id="splashVideo" width="80%" autoplay muted>
+    <video id="splashVideo" autoplay muted playsinline>
         <source src="https://github.com/SSR2308/OceanSafeLM/blob/9761d751ca32b424d92cc29eba0c179d212e7127/bc8c-f169-4534-a82d-acc2fad66609.mp4?raw=true" type="video/mp4">
         Your browser does not support the video tag.
     </video>
@@ -46,8 +51,7 @@ video.onended = function() {
 
 st.markdown(splash_html, unsafe_allow_html=True)
 
-# --- Main Homepage Content (hidden behind splash) ---
-# Inject custom CSS for wave and card styling if needed
+# --- Main Homepage Content ---
 with open("styles.css") as f:
     st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
 
