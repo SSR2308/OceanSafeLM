@@ -51,15 +51,6 @@ time.sleep(5)  # duration of splash
 splash_container.empty()
 
 # ---------------------------
-# Sidebar Toggle Button
-# ---------------------------
-toggle = st.button("☰ Menu")  # hamburger button
-if toggle:
-    st.session_state.sidebar_state = st.session_state.get("sidebar_state", "collapsed")
-    # Use Streamlit command to expand
-    st.experimental_set_query_params(show_sidebar="true")
-
-# ---------------------------
 # Sidebar Content
 # ---------------------------
 st.sidebar.header("Navigation")
@@ -70,7 +61,7 @@ st.sidebar.info("Select a page to explore!")
 # ---------------------------
 st.markdown("""
 <div style='text-align: center; color: white;'>
-    <h1 style='font-size: 3em;'>Ocean Safe 🏖️</h1>
+    <h1 style='font-size: 3em;'>Beach Safety Chatbot 🏖️</h1>
     <p style='font-size: 1.2em;'>Your intelligent companion for safe beach adventures!</p>
 </div>
 """, unsafe_allow_html=True)
