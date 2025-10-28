@@ -98,7 +98,7 @@ beaches = {
     },
     "Venice Beach": {
         "lat": 33.9850, "lon": -118.4695, "station": "9410840",
-        "image": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&h=400&fit=crop",
+        "image": "https://drupal-prod.visitcalifornia.com/sites/default/files/styles/fluid_1920/public/VC_California101_VeniceBeach_Stock_RF_638340372_1280x640.jpg.webp?itok=emtWYsp9",
         "description": "Known for its bohemian spirit, street performers, and bustling boardwalk.",
         "fun_facts": [
             "Home to Muscle Beach outdoor gym.",
@@ -114,7 +114,7 @@ beaches = {
     },
     "Malibu Surfrider Beach": {
         "lat": 34.0360, "lon": -118.6880, "station": "9410840",
-        "image": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&h=400&fit=crop",
+        "image": "https://www.worldbeachguide.com/photos/large/malibu-beach-pier-lagoon.jpg",
         "description": "Famous for perfect waves and surf culture.",
         "fun_facts": [
             "Known as 'The First Point' by surfers.",
@@ -130,7 +130,7 @@ beaches = {
     },
     "Huntington Beach": {
         "lat": 33.6595, "lon": -117.9988, "station": "9411270",
-        "image": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&h=400&fit=crop",
+        "image": "https://www.redfin.com/blog/wp-content/uploads/2023/12/GettyImages-1812336731.jpg",
         "description": "Also known as Surf City USA, world-famous for surfing.",
         "fun_facts": [
             "Hosts the US Open of Surfing.",
@@ -146,7 +146,7 @@ beaches = {
     },
     "Newport Beach": {
         "lat": 33.6189, "lon": -117.9290, "station": "9411340",
-        "image": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&h=400&fit=crop",
+        "image": "https://static.independent.co.uk/2023/07/27/12/iStock-1210240213%20%281%29.jpg",
         "description": "Offers wide sandy beaches and a bustling harbor.",
         "fun_facts": [
             "Famous for Newport Harbor boating.",
@@ -162,7 +162,7 @@ beaches = {
     },
     "Laguna Beach": {
         "lat": 33.5427, "lon": -117.7854, "station": "9411340",
-        "image": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&h=400&fit=crop",
+        "image": "https://cdn.britannica.com/37/189937-050-478BECD3/Night-view-Laguna-Beach-California.jpg",
         "description": "Known for art galleries, tide pools, and dramatic cliffs.",
         "fun_facts": [
             "Home to the annual Pageant of the Masters.",
