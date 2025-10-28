@@ -1,4 +1,5 @@
 import streamlit as st
+import time
 
 st.set_page_config(
     page_title="Ocean Safe",
@@ -6,63 +7,33 @@ st.set_page_config(
     layout="wide"
 )
 
-# Inject custom CSS for wave and card styling
+# Inject CSS
 with open("styles.css") as f:
     st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
 
-# Hero section with background image
-st.markdown("""
-<div style='position: relative; text-align: center; color: white;'>
-    <h1 style='font-size: 3em; margin-bottom: 0;'>Beach Safety Chatbot 🏖️</h1>
-    <p style='font-size: 1.2em; margin-top: 0;'>Your intelligent companion for safe beach adventures!</p>
+# Placeholder for loader
+loader_placeholder = st.empty()
+
+# Show loader
+loader_placeholder.markdown("""
+<div class="loader-overlay">
+    <div class="loader"></div>
 </div>
 """, unsafe_allow_html=True)
 
+# Simulate loading (replace with actual initialization if needed)
+time.sleep(2)  # <-- time loader is visible
+
+# Remove loader
+loader_placeholder.empty()
+
+# Now render the actual homepage content
+st.title("Beach Safety Chatbot 🏖️")
 st.image(
     "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&h=400&fit=crop",
     use_container_width=True,
     caption="Stay Safe at the Beach"
 )
+st.markdown('<div class="wave"></div>', unsafe_allow_html=True)
 
-# Layered wave animations
-st.markdown("""
-<div class="wave"></div>
-<div class="wave wave2"></div>
-""", unsafe_allow_html=True)
-
-# About section using tabs
-st.markdown("<br>", unsafe_allow_html=True)
-tabs = st.tabs(["🌟 Overview", "🚨 Features", "💡 Tidebot Helps You"])
-
-with tabs[0]:
-    st.markdown("""
-    Welcome to **Ocean Safe**. Ask Tidebot any beach-related questions and get accurate safety info!
-    Explore weather, tide patterns, hazards, and navigation to beaches.
-    """)
-
-with tabs[1]:
-    st.markdown("""
-    **Features Include:**  
-    - 🌡 Temperature, Weather & UV forecasts  
-    - 🌊 Tide patterns for the day  
-    - 🚨 Live hazard reports  
-    - 🗺 Live navigation to beaches
-    """)
-
-with tabs[2]:
-    st.markdown("""
-    **Tidebot Helps You:**  
-    - 🚨 Identify potential hazards  
-    - 💡 Get instant answers to beach safety questions  
-    - 🏊 Learn about water & marine life safety  
-    - ☀️ Sun protection tips  
-    - 🆘 Emergency advice for beach incidents
-    """)
-
-# Footer
-st.markdown("<br><br>", unsafe_allow_html=True)
-st.markdown("---")
-st.markdown(
-    "<p style='text-align: center; color: gray;'>Stay safe, stay informed, enjoy the beach! 🌴</p>",
-    unsafe_allow_html=True
-)
+# ... rest of your homepage content ...
