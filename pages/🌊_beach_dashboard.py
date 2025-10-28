@@ -287,7 +287,20 @@ components.html(f"""
         const nav = new mapboxgl.NavigationControl();
         map.addControl(nav);
 
-        // Geolocate Control (shows live location as a blue dot)
+        // Custom blue user marker
+        const userEl = document.createElement('div');
+        userEl.className = 'user-marker';
+        userEl.style.backgroundColor = 'blue';
+        userEl.style.width = '20px';
+        userEl.style.height = '20px';
+        userEl.style.borderRadius = '50%';
+        userEl.style.border = '2px solid white';
+
+        const userMarker = new mapboxgl.Marker({{ element: userEl }})
+            .setLngLat([{beach_coords['lon']}, {beach_coords['lat']}])
+            .addTo(map);
+
+        // Geolocate control for tracking
         const geolocate = new mapboxgl.GeolocateControl({{
             positionOptions: {{
                 enableHighAccuracy: true
@@ -297,9 +310,16 @@ components.html(f"""
         }});
         map.addControl(geolocate);
 
-        // Trigger geolocation automatically
         map.on('load', function() {{
             geolocate.trigger();
+        }});
+
+        // Update blue marker as location changes
+        geolocate.on('geolocate', function(e) {{
+            const lon = e.coords.longitude;
+            const lat = e.coords.latitude;
+            userMarker.setLngLat([lon, lat]);
+            map.setCenter([lon, lat]);
         }});
 
         // Add hazard markers
@@ -313,7 +333,7 @@ components.html(f"""
             }}
         }});
 
-        // Add hazard reporting on click
+        // Click-to-report hazards
         map.on('click', function(e) {{
             const lat = e.lngLat.lat;
             const lon = e.lngLat.lng;
@@ -331,10 +351,15 @@ components.html(f"""
             }}
         }});
 
-        // Optional directions control
+        // Directions
         {"window.directions = new MapboxDirections({accessToken: mapboxgl.accessToken, unit:'imperial', profile:'mapbox/walking'}); map.addControl(window.directions, 'top-left'); window.directions.setDestination([" + str(beach_coords['lon']) + "," + str(beach_coords['lat']) + "]);" if show_directions else ""}
     </script>
+    <style>
+        .user-marker {{
+            box-shadow: 0 0 5px rgba(0,0,0,0.5);
+        }}
+    </style>
 </body>
 """, height=650)
 
-st.write("🟢 Your location updates live (blue dot). Click the map to report hazards. If 'Show Directions' is toggled on, navigation automatically starts.")
+st.write("🟢 Your location updates live (blue marker). Click the map to report hazards. If 'Show Directions' is toggled on, navigation automatically starts.")
