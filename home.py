@@ -27,17 +27,17 @@ splash_container.markdown(f"""
     background-color: white;
     display: flex;
     flex-direction: column;
-    justify-content: center;  /* vertically center video */
+    justify-content: flex-end;  /* push video lower */
     align-items: center;        
     z-index: 9999;
     animation: fadeout 1s ease 4s forwards;
-    padding-bottom: 80px;    /* keeps text in position */
+    padding-bottom: 150px;    /* adjust space for text */
 ">
     <video autoplay muted playsinline style="
         width: 95%;         
         height: auto;       
-        max-height: 70%;    /* slightly smaller to fit centered */
-        margin-bottom: 50px; /* keeps text at bottom */
+        max-height: 75%;    /* make it larger */
+        margin-bottom: 50px; /* space above text */
     ">
         <source src="{video_url}" type="video/mp4">
         Your browser does not support the video tag.
