@@ -14,8 +14,7 @@ st.set_page_config(
 # ---------------------------
 # Fullscreen Splash Animation with Text
 # ---------------------------
-# Use a direct MP4 URL that streams properly
-video_url = "https://github.com/SSR2308/OceanSafeLM/raw/9761d751ca32b424d92cc29eba0c179d212e7127/bc8c-f169-4534-a82d-acc2fad66609.mp4"
+video_url = "https://github.com/SSR2308/OceanSafeLM/blob/9761d751ca32b424d92cc29eba0c179d212e7127/bc8c-f169-4534-a82d-acc2fad66609.mp4?raw=true"
 
 splash_container = st.empty()
 splash_container.markdown(f"""
@@ -27,16 +26,18 @@ splash_container.markdown(f"""
     height: 100%;
     background-color: white;
     z-index: 9999;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     animation: fadeout 1s ease 4s forwards;
 ">
 
     <!-- Centered Video -->
-    <video autoplay muted loop style="
-        width: 60%;
-        max-height: 60%;
+    <video autoplay muted playsinline style="
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 90%;
+        height: auto;
+        max-height: 75%;
     ">
         <source src="{video_url}" type="video/mp4">
         Your browser does not support the video tag.
@@ -67,7 +68,7 @@ splash_container.markdown(f"""
 </style>
 """, unsafe_allow_html=True)
 
-time.sleep(5)  # wait for splash duration
+time.sleep(5)
 splash_container.empty()
 
 # ---------------------------
