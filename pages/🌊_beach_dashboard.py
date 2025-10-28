@@ -278,10 +278,18 @@ const geolocate = new mapboxgl.GeolocateControl({{
 }});
 map.addControl(geolocate);
 
-// Trigger geolocation on map load
-map.on('load', function() {{
-    geolocate.trigger();
+// Get user location via browser API
+navigator.geolocation.getCurrentPosition(function(position) {{
+    const lat = position.coords.latitude;
+    const lon = position.coords.longitude;
+    map.setCenter([lon, lat]);
+    if(!userMarker){
+        userMarker = new mapboxgl.Marker({{color:'blue'}}).setLngLat([lon, lat]).addTo(map);
+    }} else {{
+        userMarker.setLngLat([lon, lat]);
+    }}
 }});
+
 
 // Custom blue marker for user location
 let userMarker = null;
