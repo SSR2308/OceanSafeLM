@@ -277,38 +277,42 @@ components.html(f"""
     <script>
         mapboxgl.accessToken = '{MAPBOX_TOKEN}';
 
-        let map;
-        let userMarker;
-        let directions;
+        navigator.geolocation.getCurrentPosition(successLocation, errorLocation, {{
+            enableHighAccuracy: true
+        }});
+
+        function successLocation(position) {{
+            setupMap([position.coords.longitude, position.coords.latitude])
+        }}
+
+        function errorLocation() {{
+            setupMap([{beach_coords['lon']}, {beach_coords['lat']}])
+        }}
 
         function setupMap(center) {{
-            map = new mapboxgl.Map({{
+            const map = new mapboxgl.Map({{
                 container: 'map',
                 style: 'mapbox://styles/mapbox/streets-v11',
                 center: center,
                 zoom: 14
             }});
 
-            // Add navigation controls
-            map.addControl(new mapboxgl.NavigationControl());
+            const nav = new mapboxgl.NavigationControl();
+            map.addControl(nav);
 
-            // Add user location marker
-            userMarker = new mapboxgl.Marker({{color:'blue'}})
+            const userMarker = new mapboxgl.Marker({{color:'blue'}})
                 .setLngLat(center)
                 .addTo(map);
 
-            // Live user location updates
-            if(navigator.geolocation) {{
-                navigator.geolocation.watchPosition(pos => {{
-                    const coords = [pos.coords.longitude, pos.coords.latitude];
-                    userMarker.setLngLat(coords);
-                    if(directions) {{
-                        directions.setOrigin(coords);
-                    }}
-                }}, err => console.error(err), {{ enableHighAccuracy: true }});
-            }}
+            navigator.geolocation.watchPosition(function(pos){{
+                const lon = pos.coords.longitude;
+                const lat = pos.coords.latitude;
+                userMarker.setLngLat([lon, lat]);
+                if(window.directions) {{
+                    window.directions.setOrigin([lon, lat]);
+                }}
+            }}, function(err){{ console.error(err); }}, {{ enableHighAccuracy:true }});
 
-            // Add hazard markers
             const hazards = {hazard_data_json};
             hazards.forEach(h => {{
                 if(h.beach == "{selected_beach}") {{
@@ -319,7 +323,6 @@ components.html(f"""
                 }}
             }});
 
-            // Click to report hazard
             map.on('click', function(e) {{
                 const lat = e.lngLat.lat;
                 const lon = e.lngLat.lng;
@@ -337,41 +340,10 @@ components.html(f"""
                 }}
             }});
 
-            // Directions
-            {"setupDirections();" if show_directions else ""}
-        }}
-
-        // Initial geolocation
-        navigator.geolocation.getCurrentPosition(
-            pos => setupMap([pos.coords.longitude, pos.coords.latitude]),
-            err => setupMap([{beach_coords['lon']}, {beach_coords['lat']}]),
-            {{ enableHighAccuracy: true }}
-        );
-
-        // Directions function
-        function setupDirections() {{
-            directions = new MapboxDirections({{
-                accessToken: mapboxgl.accessToken,
-                unit:'imperial',
-                profile:'mapbox/walking'
-            }});
-            map.addControl(directions, 'top-left');
-
-            // Set destination to beach
-            directions.setDestination([{beach_coords['lon']}, {beach_coords['lat']}]);
-
-            // Fit map to entire route
-            directions.on('route', function(e) {{
-                if(e.route && e.route.length > 0) {{
-                    const route = e.route[0].geometry.coordinates;
-                    const bounds = route.reduce((bounds, coord) => bounds.extend(coord), new mapboxgl.LngLatBounds(route[0], route[0]));
-                    map.fitBounds(bounds, {{padding: 50}});
-                }}
-            }});
+            {"window.directions = new MapboxDirections({accessToken: mapboxgl.accessToken, unit:'imperial', profile:'mapbox/walking'}); map.addControl(window.directions, 'top-left'); window.directions.setDestination([" + str(beach_coords['lon']) + "," + str(beach_coords['lat']) + "]);" if show_directions else ""}
         }}
     </script>
 </body>
 """, height=650)
-
 
 st.write("🟢 Your location updates live (blue marker). Click the map to report hazards. If 'Show Directions' is toggled on, navigation automatically starts.")
