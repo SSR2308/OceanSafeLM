@@ -274,6 +274,9 @@ st.markdown(
 # ---------------------------
 # Map Section
 # ---------------------------
+# ---------------------------
+# Map Section
+# ---------------------------
 hazard_data_json = json.dumps(st.session_state["hazard_reports"])
 show_directions = st.checkbox("Show Directions", key="directions_toggle")
 
@@ -289,7 +292,7 @@ components.html(f"""
 <script>
 mapboxgl.accessToken = '{MAPBOX_TOKEN}';
 
-// helper to compute bounds from coords
+// helper to compute bounds from an array of [lng,lat] coords
 function coordsToBounds(coords){{
     if(!coords || coords.length === 0) return null;
     var minLng = coords[0][0], minLat = coords[0][1], maxLng = coords[0][0], maxLat = coords[0][1];
@@ -303,7 +306,7 @@ function coordsToBounds(coords){{
     return [[minLng, minLat], [maxLng, maxLat]];
 }}
 
-// init map with geolocation or beach fallback
+// request location and initialize map with it (falls back to beach coords)
 navigator.geolocation.getCurrentPosition(successLocation, errorLocation, {{ enableHighAccuracy: true, timeout: 10000 }});
 
 function successLocation(position) {{
@@ -326,27 +329,12 @@ function setupMap(initialCenter, hasGeolocation) {{
     const nav = new mapboxgl.NavigationControl();
     map.addControl(nav);
 
-    // traffic layer
-    map.on('load', function() {{
-        map.addLayer({{
-            id: 'traffic',
-            type: 'line',
-            source: {{
-                type: 'vector',
-                url: 'mapbox://mapbox.mapbox-traffic-v1'
-            }},
-            'source-layer': 'traffic',
-            layout: {{ 'line-join': 'round', 'line-cap': 'round' }},
-            paint: {{ 'line-color': '#ff0000', 'line-width': 2 }}
-        }});
-    }});
-
-    // user marker
+    // user marker (blue)
     const userMarker = new mapboxgl.Marker({{ color: 'blue' }})
         .setLngLat(initialCenter)
         .addTo(map);
 
-    // hazard markers
+    // Add hazard markers from Python session_state
     const hazards = {hazard_data_json};
     hazards.forEach(h => {{
         if (h.beach == "{selected_beach}") {{
@@ -357,18 +345,17 @@ function setupMap(initialCenter, hasGeolocation) {{
         }}
     }});
 
-    // update user marker live
+    // update user marker live, update directions origin if directions are active
     navigator.geolocation.watchPosition(function(pos) {{
         const lon = pos.coords.longitude;
         const lat = pos.coords.latitude;
         userMarker.setLngLat([lon, lat]);
         if (window.directionsInstance && typeof window.directionsInstance.setOrigin === 'function') {{
-            try {{ window.directionsInstance.setOrigin([lon, lat]); }} 
-            catch(e){{ console.warn("directions setOrigin error", e); }}
+            try {{ window.directionsInstance.setOrigin([lon, lat]); }} catch(e){{ console.warn("directions setOrigin error", e); }}
         }}
     }}, function(err){{ console.error("watchPosition error", err); }}, {{ enableHighAccuracy:true }});
 
-    // report hazards by clicking
+    // clicking map to report hazards (creates marker and posts back)
     map.on('click', function(e) {{
         const lat = e.lngLat.lat;
         const lon = e.lngLat.lng;
@@ -380,30 +367,28 @@ function setupMap(initialCenter, hasGeolocation) {{
                 body: JSON.stringify({{lat:lat, lon:lon, hazard: hazard, beach: "{selected_beach}"}})
             }});
             new mapboxgl.Marker({{color:'orange'}})
-                .setLngLat([lon, lat])
-                .setPopup(new mapboxgl.Popup().setText(hazard))
-                .addTo(map);
+            .setLngLat([lon, lat])
+            .setPopup(new mapboxgl.Popup().setText(hazard))
+            .addTo(map);
         }}
     }});
 
-    // directions control
+    // If "Show Directions" checked, add directions control
     if ({str(show_directions).lower()}) {{
         window.directionsInstance = new MapboxDirections({{
             accessToken: mapboxgl.accessToken,
             unit: 'imperial',
-            profile: 'mapbox/driving',   // default driving
+            profile: 'mapbox/walking',
             interactive: true,
-            controls: {{ inputs: true, instructions: true, profileSwitcher: true }}, // allow walking/cycling
+            controls: {{ inputs: true, instructions: true, profileSwitcher: true }},
             fitBounds: false
         }});
         map.addControl(window.directionsInstance, 'top-left');
-
         try {{
             window.directionsInstance.setOrigin(initialCenter);
             window.directionsInstance.setDestination([{beach_coords['lon']}, {beach_coords['lat']}]);
         }} catch(e) {{ console.warn("initial setOrigin/setDestination error", e); }}
 
-        // fit bounds when route is produced
         let hasFittedRoute = false;
         if (window.directionsInstance && typeof window.directionsInstance.on === 'function') {{
             window.directionsInstance.on('route', function(e) {{
@@ -411,6 +396,7 @@ function setupMap(initialCenter, hasGeolocation) {{
                 const route = e.route[0];
                 let coords = [];
                 if (route.geometry && route.geometry.coordinates) coords = route.geometry.coordinates;
+                else if (route.geometry && route.geometry.type === 'LineString' && route.geometry.coordinates) coords = route.geometry.coordinates;
                 else if (route.legs) {{
                     route.legs.forEach(leg => {{
                         if (leg.steps) {{
@@ -425,8 +411,17 @@ function setupMap(initialCenter, hasGeolocation) {{
                 }}
                 if (coords && coords.length > 0) {{
                     const bounds = coordsToBounds(coords);
-                    if (bounds) map.fitBounds(bounds, {{ padding: 60, linear: true }});
-                    hasFittedRoute = true;
+                    if (bounds) {{ map.fitBounds(bounds, {{ padding: 60, linear: true }}); hasFittedRoute = true; }}
+                }} else {{
+                    try {{
+                        const origin = window.directionsInstance.getOrigin();
+                        const destination = window.directionsInstance.getDestination();
+                        if(origin && destination){{
+                            const o = origin.geometry && origin.geometry.coordinates ? origin.geometry.coordinates : origin;
+                            const d = destination.geometry && destination.geometry.coordinates ? destination.geometry.coordinates : destination;
+                            map.fitBounds([[Math.min(o[0], d[0]), Math.min(o[1], d[1])], [Math.max(o[0], d[0]), Math.max(o[1], d[1])]], {{ padding:60 }});
+                        }}
+                    }} catch(err){{ console.warn("fallback fitBounds error", err); }}
                 }}
             }});
         }}
@@ -435,5 +430,4 @@ function setupMap(initialCenter, hasGeolocation) {{
 </script>
 </body>
 """, height=650)
-
-st.write("🟢 Your location updates live (blue marker). Click the map to report hazards. If 'Show Directions' is toggled on, a route from your current location → selected beach will appear and the map will fit the entire route.")
+st.write("🟢 Your location updates live (blue marker). Click the map to report hazards. If 'Show Directions' is toggled on, a route from your current location → selected beach will appear and the map will fit the entire route (instead of centering only on the beach).")
