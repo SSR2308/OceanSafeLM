@@ -83,7 +83,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 st.image(
-    "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&h=400&fit=crop",
+    "https://storage.needpix.com/rsynced_images/beach-1634736_1280.jpg",
     use_container_width=True,
     caption="Stay Safe at the Beach"
 )
