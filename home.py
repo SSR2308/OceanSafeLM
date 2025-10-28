@@ -1,33 +1,56 @@
 import streamlit as st
+import time
 
+# ---------------------------
+# Page Config
+# ---------------------------
 st.set_page_config(
     page_title="Ocean Safe",
     page_icon="🏖️",
-    layout="wide"
+    layout="wide",
+    initial_sidebar_state="collapsed"  # hide sidebar during splash
 )
 
-# Inject custom CSS for wave and card styling, remove Streamlit blue elements
+# ---------------------------
+# Fullscreen Splash Animation
+# ---------------------------
+splash_container = st.empty()
+
+# Use your GitHub raw link for MP4
+video_url = "https://github.com/SSR2308/OceanSafeLM/blob/9761d751ca32b424d92cc29eba0c179d212e7127/bc8c-f169-4534-a82d-acc2fad66609.mp4?raw=true"
+
+# Center video and make background white
+splash_container.markdown(f"""
+<div style="
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: white;
+">
+    <video autoplay muted playsinline style="max-width: 80%; max-height: 80%;">
+        <source src="{video_url}" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+</div>
+""", unsafe_allow_html=True)
+
+# Wait for video duration (replace 5 with actual seconds of your video)
+time.sleep(5)
+
+# Clear splash container
+splash_container.empty()
+
+# ---------------------------
+# Main Homepage Content
+# ---------------------------
+# Inject custom CSS for cards and styling
 with open("styles.css") as f:
     st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
 
-st.markdown("""
-<style>
-/* Remove Streamlit blue default */
-.stApp, body {
-    background-color: white;
-}
-
-h1, h2, h3, p {
-    color: #023e8a; /* optional: dark blue text */
-}
-
-.stButton>button {
-    background-color: #0077b6 !important;
-    color: white !important;
-    border: none !important;
-}
-</style>
-""", unsafe_allow_html=True)
+# Show sidebar now (optional)
+st.sidebar.header("Navigation")
+st.sidebar.info("Select a page to explore!")
 
 # Hero section
 st.markdown("""
@@ -43,11 +66,7 @@ st.image(
     caption="Stay Safe at the Beach"
 )
 
-# Wave animation div
-st.markdown('<div class="wave"></div>', unsafe_allow_html=True)
-
 # About section using tabs
-st.markdown("<br>", unsafe_allow_html=True)
 tabs = st.tabs(["🌟 Overview", "🚨 Features", "💡 Tidebot Helps You"])
 
 with tabs[0]:
