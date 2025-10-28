@@ -1,0 +1,27 @@
+/* styles.css */
+body {
+    background: linear-gradient(to top, #00c6ff, #0072ff);
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    font-family: 'Arial', sans-serif;
+}
+
+.wave {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 100px;
+    background: url('https://www.pngmart.com/files/2/Wave-PNG-Transparent-Image.png') repeat-x;
+    animation: wave-animation 10s linear infinite;
+    z-index: -1;
+}
+
+@keyframes wave-animation {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-100%);
+    }
+}
