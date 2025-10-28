@@ -11,7 +11,7 @@ st.set_page_config(
 )
 
 # ---------------------------
-# Fullscreen Splash Animation (with fade-out)
+# Fullscreen Splash Animation
 # ---------------------------
 video_url = "https://github.com/SSR2308/OceanSafeLM/blob/9761d751ca32b424d92cc29eba0c179d212e7127/bc8c-f169-4534-a82d-acc2fad66609.mp4?raw=true"
 
@@ -60,13 +60,18 @@ st.markdown(f"""
 </div>
 
 <script>
-// Remove splash from DOM after fade-out completes
+// Remove splash from DOM and restore sidebar after fade
 setTimeout(function(){{
     var splash = document.getElementById("splash");
     if(splash) {{
         splash.remove();
     }}
-}}, 5000);  // total duration = video + fade
+    // Show sidebar again
+    const sidebar = document.querySelector('[data-testid="stSidebar"]');
+    if(sidebar) {{
+        sidebar.style.display = 'block';
+    }}
+}}, 5000);  // video duration + fade
 </script>
 """, unsafe_allow_html=True)
 
@@ -78,13 +83,9 @@ setTimeout(function(){{
 with open("styles.css") as f:
     st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
 
-# Show sidebar now (optional)
-st.sidebar.header("Navigation")
-st.sidebar.info("Select a page to explore!")
-
 # Hero section
 st.markdown("""
-<div style='position: relative; text-align: center; color: #023e8a;'>
+<div style='position: relative; text-align: center; color: white;'>
     <h1 style='font-size: 3em; margin-bottom: 0;'>Beach Safety Chatbot 🏖️</h1>
     <p style='font-size: 1.2em; margin-top: 0;'>Your intelligent companion for safe beach adventures!</p>
 </div>
