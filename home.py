@@ -11,7 +11,7 @@ st.set_page_config(
 )
 
 # ---------------------------
-# Fullscreen Splash Animation (with flex centering)
+# Fullscreen Splash Animation (with fade-out)
 # ---------------------------
 video_url = "https://github.com/SSR2308/OceanSafeLM/blob/9761d751ca32b424d92cc29eba0c179d212e7127/bc8c-f169-4534-a82d-acc2fad66609.mp4?raw=true"
 
@@ -29,7 +29,7 @@ st.markdown(f"""
     justify-content: center;
     align-items: center;
     z-index: 9999;
-    animation: fadeout 1s ease 4s forwards;
+    animation: fadeout 1s ease 4s forwards; /* fade after 4s */
 }}
 
 /* Video inside splash */
@@ -45,12 +45,6 @@ st.markdown(f"""
         visibility: hidden;
     }}
 }}
-
-/* Hide main content initially */
-#main-content {{
-    opacity: 0;
-    transition: opacity 1s ease;
-}}
 </style>
 
 <div id="splash">
@@ -61,73 +55,71 @@ st.markdown(f"""
 </div>
 
 <script>
-// Show main content after video duration + fade
+// Remove splash from DOM after fade-out completes
 setTimeout(function(){{
-    document.getElementById("main-content").style.opacity = "1";
-}}, 5000);
+    var splash = document.getElementById("splash");
+    if(splash) {{
+        splash.remove();
+    }}
+}}, 5000);  // total duration = video + fade
 </script>
 """, unsafe_allow_html=True)
 
 # ---------------------------
 # Main Homepage Content
 # ---------------------------
-main_container = st.container()
-with main_container:
-    main_container.markdown('<div id="main-content">', unsafe_allow_html=True)
 
-    # Inject custom CSS (remove any blue highlights)
-    with open("styles.css") as f:
-        st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
+# Inject custom CSS for cards and styling
+with open("styles.css") as f:
+    st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
 
-    # Sidebar
-    st.sidebar.header("Navigation")
-    st.sidebar.info("Select a page to explore!")
+# Show sidebar
+st.sidebar.header("Navigation")
+st.sidebar.info("Select a page to explore!")
 
-    # Hero section
+# Hero section
+st.markdown("""
+<div style='position: relative; text-align: center; color: #023e8a;'>
+    <h1 style='font-size: 3em; margin-bottom: 0;'>Beach Safety Chatbot 🏖️</h1>
+    <p style='font-size: 1.2em; margin-top: 0;'>Your intelligent companion for safe beach adventures!</p>
+</div>
+""", unsafe_allow_html=True)
+
+st.image(
+    "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&h=400&fit=crop",
+    use_container_width=True,
+    caption="Stay Safe at the Beach"
+)
+
+# About section using tabs
+tabs = st.tabs(["🌟 Overview", "🚨 Features", "💡 Tidebot Helps You"])
+with tabs[0]:
     st.markdown("""
-    <div style='position: relative; text-align: center; color: white;'>
-        <h1 style='font-size: 3em; margin-bottom: 0;'>Beach Safety Chatbot 🏖️</h1>
-        <p style='font-size: 1.2em; margin-top: 0;'>Your intelligent companion for safe beach adventures!</p>
-    </div>
-    """, unsafe_allow_html=True)
+    Welcome to **Ocean Safe**. Ask Tidebot any beach-related questions and get accurate safety info!
+    Explore weather, tide patterns, hazards, and navigation to beaches.
+    """)
+with tabs[1]:
+    st.markdown("""
+    **Features Include:**  
+    - 🌡 Temperature, Weather & UV forecasts  
+    - 🌊 Tide patterns for the day  
+    - 🚨 Live hazard reports  
+    - 🗺 Live navigation to beaches
+    """)
+with tabs[2]:
+    st.markdown("""
+    **Tidebot Helps You:**  
+    - 🚨 Identify potential hazards  
+    - 💡 Get instant answers to beach safety questions  
+    - 🏊 Learn about water & marine life safety  
+    - ☀️ Sun protection tips  
+    - 🆘 Emergency advice for beach incidents
+    """)
 
-    st.image(
-        "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&h=400&fit=crop",
-        use_container_width=True,
-        caption="Stay Safe at the Beach"
-    )
-
-    # About section using tabs
-    tabs = st.tabs(["🌟 Overview", "🚨 Features", "💡 Tidebot Helps You"])
-    with tabs[0]:
-        st.markdown("""
-        Welcome to **Ocean Safe**. Ask Tidebot any beach-related questions and get accurate safety info!
-        Explore weather, tide patterns, hazards, and navigation to beaches.
-        """)
-    with tabs[1]:
-        st.markdown("""
-        **Features Include:**  
-        - 🌡 Temperature, Weather & UV forecasts  
-        - 🌊 Tide patterns for the day  
-        - 🚨 Live hazard reports  
-        - 🗺 Live navigation to beaches
-        """)
-    with tabs[2]:
-        st.markdown("""
-        **Tidebot Helps You:**  
-        - 🚨 Identify potential hazards  
-        - 💡 Get instant answers to beach safety questions  
-        - 🏊 Learn about water & marine life safety  
-        - ☀️ Sun protection tips  
-        - 🆘 Emergency advice for beach incidents
-        """)
-
-    # Footer
-    st.markdown("<br><br>", unsafe_allow_html=True)
-    st.markdown("---")
-    st.markdown(
-        "<p style='text-align: center; color: white;'>Stay safe, stay informed, enjoy the beach! 🌴</p>",
-        unsafe_allow_html=True
-    )
-
-    main_container.markdown('</div>', unsafe_allow_html=True)
+# Footer
+st.markdown("<br><br>", unsafe_allow_html=True)
+st.markdown("---")
+st.markdown(
+    "<p style='text-align: center; color: gray;'>Stay safe, stay informed, enjoy the beach! 🌴</p>",
+    unsafe_allow_html=True
+)
