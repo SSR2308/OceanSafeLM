@@ -31,7 +31,7 @@ splash_container.markdown(f"""
     align-items: center;
     z-index: 9999;
     animation: fadeout 1s ease 4s forwards;
-    padding-bottom: 10px;       /* adjust space for text */
+    padding-bottom: 75px;       /* adjust space for text */
 ">
     <video autoplay muted playsinline style="
         width: 95%;
