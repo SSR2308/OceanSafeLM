@@ -1,3 +1,4 @@
+
 import streamlit as st
 import pandas as pd
 import requests
@@ -63,15 +64,15 @@ def summarize_tides(tide_df):
         return pd.DataFrame()
     df = tide_df.copy()
     df['diff'] = df['Tide (ft)'].diff().fillna(0)
-    
+
     high_tides = df[(df['diff'] > 0) & (df['diff'].shift(-1) < 0)]
     low_tides = df[(df['diff'] < 0) & (df['diff'].shift(-1) > 0)]
-    
+
     summary = pd.concat([
         pd.DataFrame({"Time": high_tides['t'], "Tide (ft)": high_tides['Tide (ft)'], "Type": "High Tide"}),
         pd.DataFrame({"Time": low_tides['t'], "Tide (ft)": low_tides['Tide (ft)'], "Type": "Low Tide"})
     ]).sort_values("Time")
-    
+
     summary['Time'] = summary['Time'].dt.strftime("%I:%M %p")
     summary['Tide (ft)'] = summary['Tide (ft)'].round(2)
     return summary
@@ -82,7 +83,7 @@ def summarize_tides(tide_df):
 beaches = {
     "Santa Monica Pier": {
         "lat": 34.0100, "lon": -118.4950, "station": "9410840",
-        "image": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&h=400&fit=crop",
+        "image": "https://images.squarespace-cdn.com/content/v1/5e0e65adcd39ed279a0402fd/1627422658456-7QKPXTNQ34W2OMBTESCJ/1.jpg?format=2500w",
         "description": "An iconic landmark offering stunning ocean views, amusement rides, and family-friendly attractions.",
         "fun_facts": [
             "Opened in 1909.",
@@ -98,7 +99,7 @@ beaches = {
     },
     "Venice Beach": {
         "lat": 33.9850, "lon": -118.4695, "station": "9410840",
-        "image": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&h=400&fit=crop",
+        "image": "https://drupal-prod.visitcalifornia.com/sites/default/files/styles/fluid_1920/public/VC_California101_VeniceBeach_Stock_RF_638340372_1280x640.jpg.webp?itok=emtWYsp9",
         "description": "Known for its bohemian spirit, street performers, and bustling boardwalk.",
         "fun_facts": [
             "Home to Muscle Beach outdoor gym.",
@@ -114,7 +115,7 @@ beaches = {
     },
     "Malibu Surfrider Beach": {
         "lat": 34.0360, "lon": -118.6880, "station": "9410840",
-        "image": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&h=400&fit=crop",
+        "image": "https://www.worldbeachguide.com/photos/large/malibu-beach-pier-lagoon.jpg",
         "description": "Famous for perfect waves and surf culture.",
         "fun_facts": [
             "Known as 'The First Point' by surfers.",
@@ -131,38 +132,25 @@ beaches = {
     "Huntington Beach": {
         "lat": 33.6595, "lon": -117.9988, "station": "9411270",
         "image": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&h=400&fit=crop",
+        "image": "https://www.redfin.com/blog/wp-content/uploads/2023/12/GettyImages-1812336731.jpg",
         "description": "Also known as Surf City USA, world-famous for surfing.",
         "fun_facts": [
             "Hosts the US Open of Surfing.",
-            "Pier extends 1,850 feet into the ocean.",
-            "Great for volleyball and beach events."
-        ],
-        "visitor_info": {
-            "Dogs Allowed": "No",
-            "Parking": "Paid, free 8 PM–6 AM",
-            "Beach Hours": "6 AM – 10 PM",
-            "Nearby Amenities": "Lifeguard Station, Food, Restrooms"
-        }
+@@ -146,7 +146,7 @@
     },
     "Newport Beach": {
         "lat": 33.6189, "lon": -117.9290, "station": "9411340",
         "image": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&h=400&fit=crop",
+        "image": "https://static.independent.co.uk/2023/07/27/12/iStock-1210240213%20%281%29.jpg",
         "description": "Offers wide sandy beaches and a bustling harbor.",
         "fun_facts": [
             "Famous for Newport Harbor boating.",
-            "Home to Balboa Fun Zone amusement area.",
-            "Popular for whale watching."
-        ],
-        "visitor_info": {
-            "Dogs Allowed": "Yes, on leash",
-            "Parking": "Paid parking",
-            "Beach Hours": "6 AM – 10 PM",
-            "Nearby Amenities": "Lifeguard Station, Food, Restrooms"
-        }
+@@ -162,188 +162,188 @@
     },
     "Laguna Beach": {
         "lat": 33.5427, "lon": -117.7854, "station": "9411340",
         "image": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&h=400&fit=crop",
+        "image": "https://cdn.britannica.com/37/189937-050-478BECD3/Night-view-Laguna-Beach-California.jpg",
         "description": "Known for art galleries, tide pools, and dramatic cliffs.",
         "fun_facts": [
             "Home to the annual Pageant of the Masters.",
@@ -195,7 +183,7 @@ beach_coords = beaches[selected_beach]
 # ---------------------------
 # Beach Image and Description
 # ---------------------------
-st.image(beach_coords["image"], use_container_width=True, caption=selected_beach)
+st.image(beach_coords["image"], use_column_width=True, caption=selected_beach)
 st.subheader(f"About {selected_beach}")
 st.write(beach_coords["description"])
 
@@ -229,7 +217,7 @@ if not tide_df.empty:
         st.table(tide_summary)
     else:
         st.info("No high/low tide points found for today.")
-    
+
     tide_df['Tide (ft)'] = tide_df['Tide (ft)'].round(2)
     with st.expander("📈 Show Tide Graph"):
         fig = px.line(
@@ -276,65 +264,72 @@ components.html(f"""
     <div id='map' style='width:100%; height:650px;'></div>
     <script>
         mapboxgl.accessToken = '{MAPBOX_TOKEN}';
-        
-        const center = [{beach_coords['lon']}, {beach_coords['lat']}]; // fallback
-        const map = new mapboxgl.Map({{
-            container: 'map',
-            style: 'mapbox://styles/mapbox/streets-v11',
-            center: center,
-            zoom: 14
-        }});
-        map.addControl(new mapboxgl.NavigationControl());
 
-        // Attempt to get user location
-        if (navigator.geolocation) {{
-            navigator.geolocation.getCurrentPosition(function(pos){{
-                const userCoords = [pos.coords.longitude, pos.coords.latitude];
-                map.setCenter(userCoords);
-                new mapboxgl.Marker({{color:'blue'}})
-                    .setLngLat(userCoords)
-                    .addTo(map);
-            }}, function(err){{
-                console.log("Geolocation failed, using default beach center.");
-                new mapboxgl.Marker({{color:'blue'}})
-                    .setLngLat(center)
-                    .addTo(map);
-            }});
-        }} else {{
-            console.log("Geolocation not supported, using default beach center.");
-            new mapboxgl.Marker({{color:'blue'}})
-                .setLngLat(center)
-                .addTo(map);
+        navigator.geolocation.getCurrentPosition(successLocation, errorLocation, {{
+            enableHighAccuracy: true
+        }});
+
+        function successLocation(position) {{
+            setupMap([position.coords.longitude, position.coords.latitude])
         }}
 
-        const hazards = {hazard_data_json};
-        hazards.forEach(h => {{
-            if(h.beach == "{selected_beach}") {{
-                new mapboxgl.Marker({{color:'orange'}})
-                    .setLngLat([h.lon, h.lat])
-                    .setPopup(new mapboxgl.Popup().setText(h.hazard))
-                    .addTo(map);
-            }}
-        }});
+        function errorLocation() {{
+            setupMap([{beach_coords['lon']}, {beach_coords['lat']}])
+        }}
 
-        map.on('click', function(e) {{
-            const lat = e.lngLat.lat;
-            const lon = e.lngLat.lng;
-            const hazard = prompt("Enter hazard type (e.g., Jellyfish, Trash, High surf):");
-            if(hazard) {{
-                fetch("", {{
-                    method: "POST",
-                    headers: {{ "Content-Type": "application/json" }},
-                    body: JSON.stringify({{lat:lat, lon:lon, hazard: hazard, beach: "{selected_beach}"}})
-                }});
-                new mapboxgl.Marker({{color:'orange'}})
-                    .setLngLat([lon, lat])
-                    .setPopup(new mapboxgl.Popup().setText(hazard))
-                    .addTo(map);
-            }}
-        }});
+        function setupMap(center) {{
+            const map = new mapboxgl.Map({{
+                container: 'map',
+                style: 'mapbox://styles/mapbox/streets-v11',
+                center: center,
+                zoom: 14
+            }});
 
-        {"window.directions = new MapboxDirections({accessToken: mapboxgl.accessToken, unit:'imperial', profile:'mapbox/walking'}); map.addControl(window.directions, 'top-left'); window.directions.setDestination([" + str(beach_coords['lon']) + "," + str(beach_coords['lat']) + "]);" if show_directions else ""}
+            const nav = new mapboxgl.NavigationControl();
+            map.addControl(nav);
+
+            const userMarker = new mapboxgl.Marker({{color:'blue'}})
+                .setLngLat(center)
+                .addTo(map);
+
+            navigator.geolocation.watchPosition(function(pos){{
+                const lon = pos.coords.longitude;
+                const lat = pos.coords.latitude;
+                userMarker.setLngLat([lon, lat]);
+                if(window.directions) {{
+                    window.directions.setOrigin([lon, lat]);
+                }}
+            }}, function(err){{ console.error(err); }}, {{ enableHighAccuracy:true }});
+
+            const hazards = {hazard_data_json};
+            hazards.forEach(h => {{
+                if(h.beach == "{selected_beach}") {{
+                    new mapboxgl.Marker({{color:'orange'}})
+                        .setLngLat([h.lon, h.lat])
+                        .setPopup(new mapboxgl.Popup().setText(h.hazard))
+                        .addTo(map);
+                }}
+            }});
+
+            map.on('click', function(e) {{
+                const lat = e.lngLat.lat;
+                const lon = e.lngLat.lng;
+                const hazard = prompt("Enter hazard type (e.g., Jellyfish, Trash, High surf):");
+                if(hazard) {{
+                    fetch("", {{
+                        method: "POST",
+                        headers: {{ "Content-Type": "application/json" }},
+                        body: JSON.stringify({{lat:lat, lon:lon, hazard: hazard, beach: "{selected_beach}"}})
+                    }});
+                    new mapboxgl.Marker({{color:'orange'}})
+                        .setLngLat([lon, lat])
+                        .setPopup(new mapboxgl.Popup().setText(hazard))
+                        .addTo(map);
+                }}
+            }});
+
+            {"window.directions = new MapboxDirections({accessToken: mapboxgl.accessToken, unit:'imperial', profile:'mapbox/walking'}); map.addControl(window.directions, 'top-left'); window.directions.setDestination([" + str(beach_coords['lon']) + "," + str(beach_coords['lat']) + "]);" if show_directions else ""}
+        }}
     </script>
 </body>
 """, height=650)
