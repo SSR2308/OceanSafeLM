@@ -272,97 +272,80 @@ components.html(f"""
 <head>
     <link href='https://api.mapbox.com/mapbox-gl-js/v3.15.0/mapbox-gl.css' rel='stylesheet' />
     <script src='https://api.mapbox.com/mapbox-gl-js/v3.15.0/mapbox-gl.js'></script>
-    <script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.1.0/mapbox-gl-directions.js'></script>
-    <link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.1.0/mapbox-gl-directions.css' />
 </head>
 <body>
-    <div id='map' style='width:100%; height:650px;'></div>
-    <script>
-        mapboxgl.accessToken = '{MAPBOX_TOKEN}';
-        const map = new mapboxgl.Map({{
-            container: 'map',
-            style: 'mapbox://styles/mapbox/streets-v11',
-            center: [{beach_coords['lon']}, {beach_coords['lat']}],
-            zoom: 14
-        }});
+<div id='map' style='width:100%; height:650px;'></div>
+<script>
+    mapboxgl.accessToken = '{MAPBOX_TOKEN}';
 
-        // Navigation controls
-        const nav = new mapboxgl.NavigationControl();
-        map.addControl(nav);
+    const map = new mapboxgl.Map({{
+        container: 'map',
+        style: 'mapbox://styles/mapbox/streets-v12',
+        center: [{beach_coords['lon']}, {beach_coords['lat']}], // fallback center
+        zoom: 14
+    }});
 
-        // Custom blue user marker
-        const userEl = document.createElement('div');
-        userEl.className = 'user-marker';
-        userEl.style.backgroundColor = 'blue';
-        userEl.style.width = '20px';
-        userEl.style.height = '20px';
-        userEl.style.borderRadius = '50%';
-        userEl.style.border = '2px solid white';
+    // Add navigation controls (zoom in/out)
+    const nav = new mapboxgl.NavigationControl();
+    map.addControl(nav, 'top-right');
 
-        const userMarker = new mapboxgl.Marker({{ element: userEl }})
-            .setLngLat([{beach_coords['lon']}, {beach_coords['lat']}])
-            .addTo(map);
+    // Add GeolocateControl to center map on user
+    const geolocate = new mapboxgl.GeolocateControl({{
+        positionOptions: {{
+            enableHighAccuracy: true
+        }},
+        trackUserLocation: true,
+        showUserHeading: true
+    }});
+    map.addControl(geolocate, 'top-left');
 
-        // Geolocate control for tracking
-        const geolocate = new mapboxgl.GeolocateControl({{
-            positionOptions: {{
-                enableHighAccuracy: true
-            }},
-            trackUserLocation: true,
-            showUserHeading: true
-        }});
-        map.addControl(geolocate);
-
-        map.on('load', function() {{
-            geolocate.trigger();
-        }});
-
-        // Update blue marker as location changes
-        geolocate.on('geolocate', function(e) {{
-            const lon = e.coords.longitude;
-            const lat = e.coords.latitude;
-            userMarker.setLngLat([lon, lat]);
-            map.setCenter([lon, lat]);
-        }});
-
-        // Add hazard markers
-        const hazards = {hazard_data_json};
-        hazards.forEach(h => {{
-            if(h.beach == "{selected_beach}") {{
-                new mapboxgl.Marker({{color:'orange'}})
-                    .setLngLat([h.lon, h.lat])
-                    .setPopup(new mapboxgl.Popup().setText(h.hazard))
-                    .addTo(map);
-            }}
-        }});
-
-        // Click-to-report hazards
-        map.on('click', function(e) {{
-            const lat = e.lngLat.lat;
-            const lon = e.lngLat.lng;
-            const hazard = prompt("Enter hazard type (e.g., Jellyfish, Trash, High surf):");
-            if(hazard) {{
-                fetch("", {{
-                    method: "POST",
-                    headers: {{ "Content-Type": "application/json" }},
-                    body: JSON.stringify({{lat:lat, lon:lon, hazard: hazard, beach: "{selected_beach}"}})
-                }});
-                new mapboxgl.Marker({{color:'orange'}})
-                    .setLngLat([lon, lat])
-                    .setPopup(new mapboxgl.Popup().setText(hazard))
-                    .addTo(map);
-            }}
-        }});
-
-        // Directions
-        {"window.directions = new MapboxDirections({accessToken: mapboxgl.accessToken, unit:'imperial', profile:'mapbox/walking'}); map.addControl(window.directions, 'top-left'); window.directions.setDestination([" + str(beach_coords['lon']) + "," + str(beach_coords['lat']) + "]);" if show_directions else ""}
-    </script>
-    <style>
-        .user-marker {{
-            box-shadow: 0 0 5px rgba(0,0,0,0.5);
+    // Blue marker for user location
+    let userMarker = null;
+    geolocate.on('geolocate', (event) => {{
+        const userCoords = [event.coords.longitude, event.coords.latitude];
+        if(!userMarker) {{
+            userMarker = new mapboxgl.Marker({{color: 'blue'}})
+                .setLngLat(userCoords)
+                .addTo(map);
+        }} else {{
+            userMarker.setLngLat(userCoords);
         }}
-    </style>
+        map.flyTo({{center: userCoords, zoom: 14}});
+    }});
+
+    // Render hazard markers
+    const hazards = {hazard_data_json};
+    hazards.forEach(h => {{
+        if(h.beach == "{selected_beach}") {{
+            new mapboxgl.Marker({{color:'orange'}})
+                .setLngLat([h.lon, h.lat])
+                .setPopup(new mapboxgl.Popup().setText(h.hazard))
+                .addTo(map);
+        }}
+    }});
+
+    // Add new hazard marker on map click
+    map.on('click', function(e) {{
+        const lat = e.lngLat.lat;
+        const lon = e.lngLat.lng;
+        const hazard = prompt("Enter hazard type (e.g., Jellyfish, Trash, High surf):");
+        if(hazard) {{
+            fetch("", {{
+                method: "POST",
+                headers: {{ "Content-Type": "application/json" }},
+                body: JSON.stringify({{lat: lat, lon: lon, hazard: hazard, beach: "{selected_beach}"}})
+            }});
+            new mapboxgl.Marker({{color:'orange'}})
+                .setLngLat([lon, lat])
+                .setPopup(new mapboxgl.Popup().setText(hazard))
+                .addTo(map);
+        }}
+    }});
+
+    // Optional: Show directions to the beach if toggled
+    {"window.directions = new MapboxDirections({accessToken: mapboxgl.accessToken, unit:'imperial', profile:'mapbox/walking'}); map.addControl(window.directions, 'top-left'); window.directions.setDestination([" + str(beach_coords['lon']) + "," + str(beach_coords['lat']) + "]);" if show_directions else ""}
+</script>
 </body>
 """, height=650)
 
-st.write("🟢 Your location updates live (blue marker). Click the map to report hazards. If 'Show Directions' is toggled on, navigation automatically starts.")
+st.write("🟢 Your location is now centered live (blue marker). Click the map to report hazards. Directions toggle works if enabled.")
