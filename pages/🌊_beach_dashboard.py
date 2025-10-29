@@ -274,6 +274,11 @@ st.markdown(
 # ---------------------------
 # Map Section
 # ---------------------------
+# Save Python boolean as lowercase JS string
+show_directions_js = "true" if show_directions else "false"
+
+hazard_data_json = json.dumps(st.session_state["hazard_reports"])
+
 components.html(f"""
 <iframe 
     id="geoFrame"
@@ -288,6 +293,8 @@ components.html(f"""
         <div id=\\'map\\' style=\\'width:100%;height:650px;\\'></div>
         <script>
         mapboxgl.accessToken = '{MAPBOX_TOKEN}';
+
+        const showDirections = {show_directions_js};
 
         function coordsToBounds(coords){{
             if(!coords || coords.length === 0) return null;
@@ -328,7 +335,7 @@ components.html(f"""
                 .setLngLat(initialCenter)
                 .addTo(map);
 
-            const hazards = {json.dumps(st.session_state["hazard_reports"])};
+            const hazards = {hazard_data_json};
             hazards.forEach(h => {{
                 if(h.beach == '{selected_beach}') {{
                     new mapboxgl.Marker({{color:'orange'}})
@@ -347,7 +354,7 @@ components.html(f"""
                 }}
             }},function(err){{console.error(err);}},{{enableHighAccuracy:true}});
 
-            if({str(show_directions).lower()}){{
+            if(showDirections){{
                 window.directionsInstance = new MapboxDirections({{
                     accessToken: mapboxgl.accessToken,
                     unit: 'imperial',
@@ -383,6 +390,7 @@ components.html(f"""
     allow="geolocation"
 ></iframe>
 """, height=650)
+
 
 
 st.write("🟢 Your location updates live (blue marker). Click the map to report hazards. If 'Show Directions' is toggled on, a route from your current location → selected beach will appear and the map will fit the entire route (instead of centering only on the beach).")
