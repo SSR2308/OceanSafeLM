@@ -274,161 +274,115 @@ st.markdown(
 # ---------------------------
 # Map Section
 # ---------------------------
-# ---------------------------
-# Map Section
-# ---------------------------
-hazard_data_json = json.dumps(st.session_state["hazard_reports"])
-show_directions = st.checkbox("Direction to Beach from Current Location", key="directions_toggle")
-
 components.html(f"""
-<head>
-<link href='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.css' rel='stylesheet' />
-<script src='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.js'></script>
-<script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.1.0/mapbox-gl-directions.js'></script>
-<link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.1.0/mapbox-gl-directions.css' />
-</head>
-<body>
-<div id='map' style='width:100%; height:650px;'></div>
-<script>
-mapboxgl.accessToken = '{MAPBOX_TOKEN}';
+<iframe 
+    id="geoFrame"
+    srcdoc="
+        <head>
+        <link href='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.css' rel='stylesheet' />
+        <script src='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.js'></script>
+        <script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.1.0/mapbox-gl-directions.js'></script>
+        <link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.1.0/mapbox-gl-directions.css' />
+        </head>
+        <body style='margin:0;padding:0;'>
+        <div id=\\'map\\' style=\\'width:100%;height:650px;\\'></div>
+        <script>
+        mapboxgl.accessToken = '{MAPBOX_TOKEN}';
 
-// helper to compute bounds from an array of [lng,lat] coords
-function coordsToBounds(coords){{
-    if(!coords || coords.length === 0) return null;
-    var minLng = coords[0][0], minLat = coords[0][1], maxLng = coords[0][0], maxLat = coords[0][1];
-    for(var i=1;i<coords.length;i++){{
-        var c = coords[i];
-        if(c[0] < minLng) minLng = c[0];
-        if(c[0] > maxLng) maxLng = c[0];
-        if(c[1] < minLat) minLat = c[1];
-        if(c[1] > maxLat) maxLat = c[1];
-    }}
-    return [[minLng, minLat], [maxLng, maxLat]];
-}}
-
-// request location and initialize map with it (falls back to beach coords)
-navigator.geolocation.getCurrentPosition(successLocation, errorLocation, {{ enableHighAccuracy: true, timeout: 10000 }});
-
-function successLocation(position) {{
-    const userCenter = [position.coords.longitude, position.coords.latitude];
-    setupMap(userCenter, true);
-}}
-
-function errorLocation() {{
-    setupMap([{beach_coords['lon']}, {beach_coords['lat']}], false);
-}}
-
-function setupMap(initialCenter, hasGeolocation) {{
-    const map = new mapboxgl.Map({{
-        container: 'map',
-        style: 'mapbox://styles/mapbox/streets-v11',
-        center: initialCenter,
-        zoom: 14
-    }});
-
-    const nav = new mapboxgl.NavigationControl();
-    map.addControl(nav);
-
-    // user marker (blue)
-    const userMarker = new mapboxgl.Marker({{ color: 'blue' }})
-        .setLngLat(initialCenter)
-        .addTo(map);
-
-    // Add hazard markers from Python session_state
-    const hazards = {hazard_data_json};
-    hazards.forEach(h => {{
-        if (h.beach == "{selected_beach}") {{
-            new mapboxgl.Marker({{ color: 'orange' }})
-            .setLngLat([h.lon, h.lat])
-            .setPopup(new mapboxgl.Popup().setText(h.hazard))
-            .addTo(map);
+        function coordsToBounds(coords){{
+            if(!coords || coords.length === 0) return null;
+            var minLng = coords[0][0], minLat = coords[0][1], maxLng = coords[0][0], maxLat = coords[0][1];
+            for(var i=1;i<coords.length;i++){{
+                var c = coords[i];
+                if(c[0] < minLng) minLng = c[0];
+                if(c[0] > maxLng) maxLng = c[0];
+                if(c[1] < minLat) minLat = c[1];
+                if(c[1] > maxLat) maxLat = c[1];
+            }}
+            return [[minLng, minLat],[maxLng, maxLat]];
         }}
-    }});
 
-    // update user marker live, update directions origin if directions are active
-    navigator.geolocation.watchPosition(function(pos) {{
-        const lon = pos.coords.longitude;
-        const lat = pos.coords.latitude;
-        userMarker.setLngLat([lon, lat]);
-        if (window.directionsInstance && typeof window.directionsInstance.setOrigin === 'function') {{
-            try {{ window.directionsInstance.setOrigin([lon, lat]); }} catch(e){{ console.warn("directions setOrigin error", e); }}
+        navigator.geolocation.getCurrentPosition(successLocation, errorLocation, {{enableHighAccuracy:true, timeout:10000}});
+
+        function successLocation(position){{
+            const userCenter = [position.coords.longitude, position.coords.latitude];
+            setupMap(userCenter, true);
         }}
-    }}, function(err){{ console.error("watchPosition error", err); }}, {{ enableHighAccuracy:true }});
 
-    // clicking map to report hazards (creates marker and posts back)
-    map.on('click', function(e) {{
-        const lat = e.lngLat.lat;
-        const lon = e.lngLat.lng;
-        const hazard = prompt("Enter hazard type (e.g., Jellyfish, Trash, High surf):");
-        if(hazard) {{
-            fetch("", {{
-                method: "POST",
-                headers: {{ "Content-Type": "application/json" }},
-                body: JSON.stringify({{lat:lat, lon:lon, hazard: hazard, beach: "{selected_beach}"}})
+        function errorLocation(){{
+            setupMap([{beach_coords['lon']}, {beach_coords['lat']}], false);
+        }}
+
+        function setupMap(initialCenter, hasGeolocation){{
+            const map = new mapboxgl.Map({{
+                container: 'map',
+                style: 'mapbox://styles/mapbox/streets-v11',
+                center: initialCenter,
+                zoom: 14
             }});
-            new mapboxgl.Marker({{color:'orange'}})
-            .setLngLat([lon, lat])
-            .setPopup(new mapboxgl.Popup().setText(hazard))
-            .addTo(map);
-        }}
-    }});
 
-    // If "Show Directions" checked, add directions control
-    if ({str(show_directions).lower()}) {{
-        window.directionsInstance = new MapboxDirections({{
-            accessToken: mapboxgl.accessToken,
-            unit: 'imperial',
-            profile: 'mapbox/walking',
-            interactive: true,
-            controls: {{ inputs: true, instructions: true, profileSwitcher: true }},
-            fitBounds: false
-        }});
-        map.addControl(window.directionsInstance, 'top-left');
-        try {{
-            window.directionsInstance.setOrigin(initialCenter);
-            window.directionsInstance.setDestination([{beach_coords['lon']}, {beach_coords['lat']}]);
-        }} catch(e) {{ console.warn("initial setOrigin/setDestination error", e); }}
+            const nav = new mapboxgl.NavigationControl();
+            map.addControl(nav);
 
-        let hasFittedRoute = false;
-        if (window.directionsInstance && typeof window.directionsInstance.on === 'function') {{
-            window.directionsInstance.on('route', function(e) {{
-                if (!e || !e.route || e.route.length === 0) return;
-                const route = e.route[0];
-                let coords = [];
-                if (route.geometry && route.geometry.coordinates) coords = route.geometry.coordinates;
-                else if (route.geometry && route.geometry.type === 'LineString' && route.geometry.coordinates) coords = route.geometry.coordinates;
-                else if (route.legs) {{
-                    route.legs.forEach(leg => {{
-                        if (leg.steps) {{
-                            leg.steps.forEach(step => {{
-                                if (step.geometry && step.geometry.coordinates) coords = coords.concat(step.geometry.coordinates);
-                            }});
+            const userMarker = new mapboxgl.Marker({{color:'blue'}})
+                .setLngLat(initialCenter)
+                .addTo(map);
+
+            const hazards = {json.dumps(st.session_state["hazard_reports"])};
+            hazards.forEach(h => {{
+                if(h.beach == '{selected_beach}') {{
+                    new mapboxgl.Marker({{color:'orange'}})
+                    .setLngLat([h.lon, h.lat])
+                    .setPopup(new mapboxgl.Popup().setText(h.hazard))
+                    .addTo(map);
+                }}
+            }});
+
+            navigator.geolocation.watchPosition(function(pos){{
+                const lon = pos.coords.longitude;
+                const lat = pos.coords.latitude;
+                userMarker.setLngLat([lon, lat]);
+                if(window.directionsInstance && typeof window.directionsInstance.setOrigin === 'function'){{
+                    try{{ window.directionsInstance.setOrigin([lon, lat]); }}catch(e){{ console.warn(e); }}
+                }}
+            }},function(err){{console.error(err);}},{{enableHighAccuracy:true}});
+
+            if({str(show_directions).lower()}){{
+                window.directionsInstance = new MapboxDirections({{
+                    accessToken: mapboxgl.accessToken,
+                    unit: 'imperial',
+                    profile: 'mapbox/walking',
+                    interactive: true,
+                    controls: {{inputs:true,instructions:true,profileSwitcher:true}},
+                    fitBounds:false
+                }});
+                map.addControl(window.directionsInstance,'top-left');
+                try{{
+                    window.directionsInstance.setOrigin(initialCenter);
+                    window.directionsInstance.setDestination([{beach_coords['lon']},{beach_coords['lat']}]);
+                }}catch(e){{console.warn(e);}}
+
+                if(window.directionsInstance && typeof window.directionsInstance.on === 'function'){{
+                    window.directionsInstance.on('route',function(e){{
+                        if(!e||!e.route||e.route.length===0)return;
+                        const route=e.route[0];
+                        let coords=[];
+                        if(route.geometry&&route.geometry.coordinates)coords=route.geometry.coordinates;
+                        if(coords&&coords.length>0){{
+                            const bounds=coordsToBounds(coords);
+                            if(bounds)map.fitBounds(bounds,{{padding:60,linear:true}});
                         }}
                     }});
                 }}
-                if (!coords || coords.length === 0) {{
-                    if (Array.isArray(route.geometry)) coords = route.geometry;
-                }}
-                if (coords && coords.length > 0) {{
-                    const bounds = coordsToBounds(coords);
-                    if (bounds) {{ map.fitBounds(bounds, {{ padding: 60, linear: true }}); hasFittedRoute = true; }}
-                }} else {{
-                    try {{
-                        const origin = window.directionsInstance.getOrigin();
-                        const destination = window.directionsInstance.getDestination();
-                        if(origin && destination){{
-                            const o = origin.geometry && origin.geometry.coordinates ? origin.geometry.coordinates : origin;
-                            const d = destination.geometry && destination.geometry.coordinates ? destination.geometry.coordinates : destination;
-                            map.fitBounds([[Math.min(o[0], d[0]), Math.min(o[1], d[1])], [Math.max(o[0], d[0]), Math.max(o[1], d[1])]], {{ padding:60 }});
-                        }}
-                    }} catch(err){{ console.warn("fallback fitBounds error", err); }}
-                }}
-            }});
+            }}
         }}
-    }}
-}}
-</script>
-</body>
-""", height=650, allow="geolocation")
+        </script>
+        </body>
+    "
+    style="width:100%;height:650px;border:none;"
+    allow="geolocation"
+></iframe>
+""", height=650)
+
 
 st.write("🟢 Your location updates live (blue marker). Click the map to report hazards. If 'Show Directions' is toggled on, a route from your current location → selected beach will appear and the map will fit the entire route (instead of centering only on the beach).")
