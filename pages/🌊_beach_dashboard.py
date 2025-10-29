@@ -429,5 +429,6 @@ function setupMap(initialCenter, hasGeolocation) {{
 }}
 </script>
 </body>
-""", height=650)
+""", height=650, allow="geolocation")
+
 st.write("🟢 Your location updates live (blue marker). Click the map to report hazards. If 'Show Directions' is toggled on, a route from your current location → selected beach will appear and the map will fit the entire route (instead of centering only on the beach).")
