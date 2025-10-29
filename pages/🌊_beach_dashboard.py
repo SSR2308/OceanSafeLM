@@ -7,7 +7,7 @@ import streamlit.components.v1 as components
 
 # ---------------------------
 # API Keys from Secrets
-# ---------------------------
+# --------------------------
 OPENWEATHER_API_KEY = st.secrets["OPENWEATHER_API_KEY"]
 MAPBOX_TOKEN = st.secrets["MAPBOX_TOKEN"]
 
